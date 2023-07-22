@@ -32,6 +32,8 @@ def artifacts_data() -> dict[str, ArtifactInfo]:
         '7MB.7z': ArtifactInfo(name='7MB.7z', size=8023251),
         '116MB.zip': ArtifactInfo(name='116MB.zip', size=122518995),
         '154MB.tar.gz': ArtifactInfo(name='154MB.tar.gz', size=162315691),
+        '12MB.tar.gz': ArtifactInfo(name='12MB.tar.gz', size=13047645),
+        '5MB.tar': ArtifactInfo(name='5MB.tar', size=5918720),
     }
 
 
@@ -56,6 +58,7 @@ class DecompressTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.execution_info: list[ExecutionInfo] = []
+        print(f'clean_dir {common_paths.extracted_data_path} ...')
         if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
             raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
 
