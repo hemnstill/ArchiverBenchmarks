@@ -2,7 +2,7 @@
 dp0="$(realpath "$(dirname "$0")")"
 set -e
 
-self_toolset_name="build-docker"
+self_toolset_name="build-windows"
 
 release_version_dirpath="$dp0/_rendered"
 mkdir -p "$release_version_dirpath"

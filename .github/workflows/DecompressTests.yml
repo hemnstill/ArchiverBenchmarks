@@ -7,3 +7,8 @@ jobs:
     uses: ./.github/workflows/build-docker.yml
     with:
       workflow: ${{ github.workflow }}
+
+  windows:
+    uses: ./.github/workflows/build-windows.yml
+    with:
+      workflow: ${{ github.workflow }}

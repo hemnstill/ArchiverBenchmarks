@@ -1,0 +1,24 @@
+on:
+  workflow_call:
+    inputs:
+      workflow:
+        required: true
+        type: string
+      toolset:
+        required: false
+        type: string
+        default: 'windows'
+
+jobs:
+  build-windows:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v3
+      - name: build ${{ inputs.workflow }}-windows-${{ inputs.toolset }}
+        run: |
+          .tools\busybox.exe sh ${{ inputs.workflow }}\build_${{ inputs.toolset }}.sh
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ inputs.toolset }}
+          path: ./${{ inputs.workflow }}/release/build-${{ inputs.toolset }}.tar.gz
