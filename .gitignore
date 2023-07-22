@@ -1,2 +1,5 @@
 .idea/
 __pycache__/
+
+DecompressTests/extracted_data/
+DecompressTests/data/
