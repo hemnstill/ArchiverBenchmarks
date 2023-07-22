@@ -13,4 +13,5 @@ def get_bsdtar_exe_path():
 
 
 def extract(file_path: str, output_dir_path: str):
+    os.makedirs(output_dir_path, exist_ok=True)
     subprocess.run([get_bsdtar_exe_path(), '-xf', file_path, '-C', output_dir_path], check=True)

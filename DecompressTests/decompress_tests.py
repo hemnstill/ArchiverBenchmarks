@@ -1,18 +1,18 @@
-import dataclasses
 import os
-import pprint
 import unittest
+from contextlib import suppress
 from timeit import timeit
-from typing import Callable
 
-from DecompressTests import wget_tool, bsdtar_tool, io_tools, p7zip_tool, common_paths, models, execution_renderer
+from DecompressTests import wget_tool, bsdtar_tool, io_tools, p7zip_tool, common_paths, models, execution_renderer, \
+    python_archiver_tool, p7zip_zstd_tool
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
     return {
-        '5MB.tar': models.ArtifactInfo(name='5MB.tar', size=5918720),
+        # '5MB.tar': models.ArtifactInfo(name='5MB.tar', size=5918720),
         '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251),
         '12MB.tar.gz': models.ArtifactInfo(name='12MB.tar.gz', size=13047645),
+        '33MB.tar.zst': models.ArtifactInfo(name='33MB.tar.zst', size=34635880),
         '116MB.zip': models.ArtifactInfo(name='116MB.zip', size=122518995),
         '154MB.tar.gz': models.ArtifactInfo(name='154MB.tar.gz', size=162315691),
     }
@@ -22,6 +22,8 @@ def archiver_tools() -> dict[str, models.ArchiverInfo]:
     return {
         'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', extract=bsdtar_tool.extract),
         '7zip-21.07': models.ArchiverInfo(name='7zip-21.07', extract=p7zip_tool.extract),
+        '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', extract=p7zip_zstd_tool.extract),
+        'python-3.11': models.ArchiverInfo(name='python-3.11', extract=python_archiver_tool.extract),
     }
 
 
@@ -56,9 +58,9 @@ class DecompressTests(unittest.TestCase):
             for archiver in archiver_tools().values():
                 print(f"test_extract '{artifact.name}' with '{archiver.name}'")
                 output_dir_path = os.path.join(common_paths.extracted_data_path, f"{artifact.name}_{archiver.name}")
-                os.makedirs(output_dir_path, exist_ok=True)
-
-                execution_time = round(0.5 * timeit(lambda: archiver.extract(os.path.join(common_paths.data_path, artifact.name), output_dir_path), number=2), 3)
+                execution_time = None
+                with suppress(NotImplementedError):
+                    execution_time = round(0.5 * timeit(lambda: archiver.extract(os.path.join(common_paths.data_path, artifact.name), output_dir_path), number=2), 3)
                 self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
                                                          artifact=artifact,
                                                          archiver=archiver.name))

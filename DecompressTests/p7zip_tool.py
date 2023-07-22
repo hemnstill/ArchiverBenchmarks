@@ -13,4 +13,6 @@ def get_7zip_exe_path():
 
 
 def extract(file_path: str, output_dir_path: str):
+    if file_path.endswith('.zst'):
+        raise NotImplementedError(f"7z does not support zstd: '{file_path}'")
     subprocess.run([get_7zip_exe_path(), '-bso0', '-bd', 'x', file_path, f'-o{output_dir_path}', '-aoa'], check=True)
