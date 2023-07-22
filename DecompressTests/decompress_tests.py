@@ -10,11 +10,11 @@ from DecompressTests import wget_tool, bsdtar_tool, io_tools, p7zip_tool, common
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
     return {
+        '5MB.tar': models.ArtifactInfo(name='5MB.tar', size=5918720),
         '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251),
+        '12MB.tar.gz': models.ArtifactInfo(name='12MB.tar.gz', size=13047645),
         '116MB.zip': models.ArtifactInfo(name='116MB.zip', size=122518995),
         '154MB.tar.gz': models.ArtifactInfo(name='154MB.tar.gz', size=162315691),
-        '12MB.tar.gz': models.ArtifactInfo(name='12MB.tar.gz', size=13047645),
-        '5MB.tar': models.ArtifactInfo(name='5MB.tar', size=5918720),
     }
 
 

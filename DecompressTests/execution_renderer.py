@@ -1,4 +1,5 @@
 import os.path
+import sys
 
 import pygal
 from airium import Airium
@@ -15,7 +16,7 @@ def render(execution_infos: list[models.ExecutionInfo]) -> None:
             a.meta(charset="utf-8")
             a.title(_t="Execution info")
 
-        with a.body():
+        with a.body(style="margin: 0;"):
             _render_execution(a, execution_infos)
 
     io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
@@ -24,14 +25,18 @@ def render(execution_infos: list[models.ExecutionInfo]) -> None:
 def _render_execution(a: Airium, execution_infos: list[models.ExecutionInfo]):
     os.makedirs(common_paths.render_path, exist_ok=True)
 
-    for artifact_name, exec_list_by_artifact in get_executions_by_artifact(execution_infos).items():
-        bar_chart = pygal.Bar()
-        bar_chart.title = artifact_name
-        for archiver, exec_list_by_archiver in get_executions_by_archiver(exec_list_by_artifact).items():
-            bar_chart.add(archiver, [e.execution_time for e in exec_list_by_archiver])
+    bar_chart = pygal.Bar()
+    bar_chart.title = sys.platform
 
-        bar_chart.render_to_file(os.path.join(common_paths.render_path, f'{artifact_name}.svg'))
-        a.embed(type="image/svg+xml", src=f'{artifact_name}.svg')
+    for archiver, exec_list_by_archiver in get_executions_by_archiver(execution_infos).items():
+        execution_times = []
+        for artifact, exec_list_by_artifact in get_executions_by_artifact(exec_list_by_archiver).items():
+            execution_times.extend([e.execution_time for e in exec_list_by_artifact])
+        bar_chart.add(f"{archiver}", execution_times)
+
+    bar_chart.x_labels = get_executions_by_artifact(execution_infos).keys()
+    bar_chart.render_to_file(os.path.join(common_paths.render_path, f'{sys.platform}.svg'))
+    a.embed(type="image/svg+xml", src=f'{sys.platform}.svg', style="height: calc(100vh - 5px);")
 
 
 def get_executions_by_artifact(execution_infos):
