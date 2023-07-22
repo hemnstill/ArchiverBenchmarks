@@ -3,3 +3,4 @@ __pycache__/
 
 DecompressTests/extracted_data/
 DecompressTests/data/
+DecompressTests/_rendered/
