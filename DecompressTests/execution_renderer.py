@@ -4,7 +4,7 @@ import sys
 import pygal
 from airium import Airium
 
-from . import models, common_paths, io_tools
+from DecompressTests import models, common_paths, io_tools
 
 
 def render(execution_infos: list[models.ExecutionInfo]) -> None:

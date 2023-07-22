@@ -7,7 +7,7 @@ on:
       toolset:
         required: false
         type: string
-        default: 'docker'
+        default: 'linux'
       version:
         required: false
         type: string
@@ -22,7 +22,7 @@ jobs:
       - name: build ${{ inputs.workflow }}-ubuntu-${{ inputs.toolset }}
         run: |
           apt update
-          apt install -y docker.io
+          apt install -y python3 python3-pip curl
           ./${{ inputs.workflow }}/build_${{ inputs.toolset }}.sh
 
       - uses: actions/upload-artifact@v3

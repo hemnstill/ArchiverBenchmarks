@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-from . import common_paths
+from DecompressTests import common_paths
 
 
 def get_7zip_exe_path():
