@@ -9,7 +9,7 @@ def get_7zip_exe_path():
     if sys.platform.startswith('win'):
         return os.path.join(common_paths.tools_path,'7z-21.07', '7z.exe')
 
-    return os.path.join(common_paths.tools_path,'7z-21.07', '7z')
+    return os.path.join(common_paths.tools_path,'7z-21.07', '7zzs')
 
 
 def extract(file_path: str, output_dir_path: str):
