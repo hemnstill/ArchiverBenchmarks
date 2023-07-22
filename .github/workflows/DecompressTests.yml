@@ -1,0 +1,9 @@
+name: DecompressTests
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  ubuntu-docker:
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      workflow: ${{ github.workflow }}

@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-from DecompressTests import common_paths
+from . import common_paths
 
 
 def get_bsdtar_exe_path():

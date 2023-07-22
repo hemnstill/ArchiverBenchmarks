@@ -1,5 +1,3 @@
-# pylint: disable=R1732
-""" Работа с пакетными файлами. """
 from __future__ import annotations
 
 import os

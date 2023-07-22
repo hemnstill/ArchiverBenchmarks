@@ -1,7 +1,13 @@
 import os
+import sys
 import unittest
 from contextlib import suppress
 from timeit import timeit
+
+_self_path: str = os.path.dirname(os.path.realpath(__file__))
+root_path = os.path.dirname(_self_path)
+if root_path not in sys.path:
+    sys.path.append(root_path)
 
 from DecompressTests import wget_tool, bsdtar_tool, io_tools, p7zip_tool, common_paths, models, execution_renderer, \
     python_archiver_tool, p7zip_zstd_tool
