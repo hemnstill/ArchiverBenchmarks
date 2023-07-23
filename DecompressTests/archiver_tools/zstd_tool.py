@@ -13,9 +13,8 @@ def get_zstd_exe_path():
 
 
 def extract(file_path: str, output_dir_path: str):
-    if file_path.endswith('.7z'):
-        raise NotImplementedError(f"zstd does not support 7z: '{file_path}'")
-    if file_path.endswith('.zip'):
-        raise NotImplementedError(f"zstd does not support zip: '{file_path}'")
+    supported_formats = ('.zst', '.tzst', '.gz', '.tgz')
+    if not file_path.endswith(supported_formats):
+        raise NotImplementedError(f"zstd does not support: '{file_path}'")
     os.makedirs(output_dir_path, exist_ok=True)
     subprocess.run([get_zstd_exe_path(), '--force', '-d', file_path, f'--output-dir-flat', output_dir_path], check=True)

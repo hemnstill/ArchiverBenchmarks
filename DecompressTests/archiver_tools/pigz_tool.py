@@ -13,12 +13,9 @@ def get_pigz_exe_path():
 
 
 def extract(file_path: str, output_dir_path: str):
-    if file_path.endswith('.7z'):
-        raise NotImplementedError(f"pigz does not support .7z: '{file_path}'")
-    if file_path.endswith('.zst'):
-        raise NotImplementedError(f"pigz does not support .zst: '{file_path}'")
-    if file_path.endswith('.zip'):
-        raise NotImplementedError(f"pigz does not support .zip: '{file_path}'")
+    supported_formats = ('.gz', '.tgz')
+    if not file_path.endswith(supported_formats):
+        raise NotImplementedError(f"pigz does not support: '{file_path}'")
     os.makedirs(output_dir_path, exist_ok=True)
     output_file_path = os.path.join(output_dir_path, 'stdout')
     subprocess.run(args=f'"{get_pigz_exe_path()}" --force --keep -d "{file_path}" --stdout > "{output_file_path}"', check=True, shell=True)

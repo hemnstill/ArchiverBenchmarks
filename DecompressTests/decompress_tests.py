@@ -15,7 +15,7 @@ from DecompressTests import archiver_tools
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
     return {
-        # '5MB.tar': models.ArtifactInfo(name='5MB.tar', size=5918720),
+        '200MB.tar': models.ArtifactInfo(name='200MB.tar', size=214394880),
         '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251),
         '12MB.tar.gz': models.ArtifactInfo(name='12MB.tar.gz', size=13047645),
         '33MB.tar.zst': models.ArtifactInfo(name='33MB.tar.zst', size=34635880),
