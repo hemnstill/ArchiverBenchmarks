@@ -11,7 +11,7 @@ def get_zstd_exe_path():
     if sys.platform.startswith('win'):
         return os.path.join(common_paths.tools_path,'zstd-1.5.5.exe')
 
-    raise NotImplementedError(f"platform not supported: '{sys.platform}'")
+    return 'zstd'
 
 
 def extract(file_path: str, output_dir_path: str):
