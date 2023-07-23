@@ -13,29 +13,24 @@ jobs:
     with:
       workflow: ${{ github.workflow }}
 
-  # Deploy job
   deploy:
-    # Add a dependency to the build job
     needs: [ubuntu-docker, windows]
 
     permissions:
-      contents: read
       pages: write
       id-token: write
 
-    # Deploy to the github-pages environment
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    # Specify runner + deployment step
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
       - run:
           tar -xf ./build-windows/build-windows.tar.gz -C ./_site
-      - name: Upload artifact
+      - name: Upload site artifact
         uses: actions/upload-pages-artifact@v2
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2 # or the latest "vX.X.X" version tag for this action
+        uses: actions/deploy-pages@v2
