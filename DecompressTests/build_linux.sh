@@ -13,8 +13,8 @@ python_bin_download_url="https://github.com/hemnstill/StandaloneTools/releases/d
 python_download_zip="$dp0/release/$self_name.tar.gz"
 [[ ! -f "$python_download_zip" ]] && wget "$python_bin_download_url" -O "$python_download_zip"
 
-cpython_bin="$release_version_dirpath/Scripts/bin/python3"
-[[ ! -f "$cpython_bin" ]] && tar -xf "$python_download_zip" -C "$release_version_dirpath"
+cpython_bin="$dp0/Scripts/bin/python3"
+[[ ! -f "$cpython_bin" ]] && tar -xf "$python_download_zip" -C "$dp0"
 
 "$cpython_bin" -m pip install pygal==3.0.0 airium==0.2.5 rapidgzip==0.7.0
 "$cpython_bin" -m unittest "$dp0/decompress_tests.py"
