@@ -34,6 +34,7 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
         'zstd-1.5.5': models.ArchiverInfo(name='zstd-1.5.5', extract=archiver_tools.zstd_tool.extract),
         'pigz-2.4': models.ArchiverInfo(name='pigz-2.4', extract=archiver_tools.pigz_tool.extract),
         'rapidgzip-0.7.0': models.ArchiverInfo(name='rapidgzip-0.7.0', extract=archiver_tools.rapidgzip_tool.extract),
+        'python-zstandard-0.21': models.ArchiverInfo(name='python-zstandard-0.21', extract=archiver_tools.python_ztandard.extract),
     }
 
 

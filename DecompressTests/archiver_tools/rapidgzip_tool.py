@@ -9,7 +9,6 @@ def extract(file_path: str, output_dir_path: str):
     if not file_path.endswith(supported_formats):
         raise NotImplementedError(f"rapidgzip does not support: '{file_path}'")
     os.makedirs(output_dir_path, exist_ok=True)
-    output_file_path = os.path.join(output_dir_path, 'stdout')
     with rapidgzip.open(file_path) as rapidgzip_file:
         with tarfile.TarFile(fileobj=rapidgzip_file) as output_file:
             output_file.extractall(output_dir_path)
