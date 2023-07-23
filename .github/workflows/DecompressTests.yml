@@ -31,12 +31,11 @@ jobs:
     # Specify runner + deployment step
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        run:
+          tar -xf ./build-windows/build-windows.tar.gz -C ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
-        with:
-          path: './DecompressTests/rendered_data'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2 # or the latest "vX.X.X" version tag for this action
