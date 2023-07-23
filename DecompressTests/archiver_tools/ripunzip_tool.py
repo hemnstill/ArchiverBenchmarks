@@ -18,4 +18,4 @@ def extract(file_path: str, output_dir_path: str):
         raise NotImplementedError(f"ripunzip does not support: '{file_path}'")
     os.makedirs(output_dir_path, exist_ok=True)
     subprocess.run(args=f'"{get_ripunzip_exe_path()}" --output-directory "{output_dir_path}" file "{file_path}"',
-                   check=True)
+                   check=True, shell=True)
