@@ -8,7 +8,7 @@ from .bsdtar_tool import get_bsdtar_exe_path
 
 def get_igzip_exe_path():
     if sys.platform.startswith('win'):
-        return NotImplementedError(f"platform not supported: '{sys.platform}'")
+        raise NotImplementedError(f"platform not supported: '{sys.platform}'")
 
     return 'igzip'
 
