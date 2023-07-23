@@ -1,6 +1,7 @@
 import os
 import shutil
 import rapidgzip
+import tarfile
 
 
 def extract(file_path: str, output_dir_path: str):
@@ -10,5 +11,5 @@ def extract(file_path: str, output_dir_path: str):
     os.makedirs(output_dir_path, exist_ok=True)
     output_file_path = os.path.join(output_dir_path, 'stdout')
     with rapidgzip.open(file_path) as rapidgzip_file:
-        with open(output_file_path, 'wb') as output_file:
-            shutil.copyfileobj(rapidgzip_file, output_file)
+        with tarfile.TarFile(fileobj=rapidgzip_file) as output_file:
+            output_file.extractall(output_dir_path)
