@@ -9,8 +9,8 @@ root_path = os.path.dirname(_self_path)
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from DecompressTests import wget_tool, bsdtar_tool, io_tools, p7zip_tool, common_paths, models, execution_renderer, \
-    python_archiver_tool, p7zip_zstd_tool, zstd_tool, pigz_tool
+from DecompressTests import wget_tool, io_tools, common_paths, models, execution_renderer
+from DecompressTests import archiver_tools
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
@@ -24,14 +24,15 @@ def artifacts_data() -> dict[str, models.ArtifactInfo]:
     }
 
 
-def archiver_tools() -> dict[str, models.ArchiverInfo]:
+def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
     return {
-        'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', extract=bsdtar_tool.extract),
-        '7zip-21.07': models.ArchiverInfo(name='7zip-21.07', extract=p7zip_tool.extract),
-        '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', extract=p7zip_zstd_tool.extract),
-        'python-3.11': models.ArchiverInfo(name='python-3.11', extract=python_archiver_tool.extract),
-        'zstd-1.5.5': models.ArchiverInfo(name='zstd-1.5.5', extract=zstd_tool.extract),
-        'pigz-2.4': models.ArchiverInfo(name='pigz-2.4', extract=pigz_tool.extract),
+        'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', extract=archiver_tools.bsdtar_tool.extract),
+        '7zip-21.07': models.ArchiverInfo(name='7zip-21.07', extract=archiver_tools.p7zip_tool.extract),
+        '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', extract=archiver_tools.p7zip_zstd_tool.extract),
+        'python-3.11': models.ArchiverInfo(name='python-3.11', extract=archiver_tools.python_archiver_tool.extract),
+        'zstd-1.5.5': models.ArchiverInfo(name='zstd-1.5.5', extract=archiver_tools.zstd_tool.extract),
+        'pigz-2.4': models.ArchiverInfo(name='pigz-2.4', extract=archiver_tools.pigz_tool.extract),
+        'rapidgzip-0.7.0': models.ArchiverInfo(name='rapidgzip-0.7.0', extract=archiver_tools.rapidgzip_tool.extract),
     }
 
 
@@ -63,7 +64,7 @@ class DecompressTests(unittest.TestCase):
 
     def test_extract(self):
         for artifact in artifacts_data().values():
-            for archiver in archiver_tools().values():
+            for archiver in get_archiver_tools().values():
                 print(f"test_extract '{artifact.name}' with '{archiver.name}'")
                 output_dir_path = os.path.join(common_paths.extracted_data_path, f"{artifact.name}_{archiver.name}")
                 execution_time = None

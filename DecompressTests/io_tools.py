@@ -3,6 +3,8 @@ import pathlib
 import shutil
 import time
 import zipfile
+import importlib
+from types import ModuleType
 
 from typing import Type, Callable, Union
 from os import path as os_path
@@ -95,3 +97,14 @@ def read_text(file_path: Union[str, pathlib.Path], encoding: str = 'utf-8') -> s
 
 def write_text(file_path: Union[str, pathlib.Path], data: str, encoding: str = 'utf-8') -> int:
     return pathlib.Path(file_path).write_text(data=data, encoding=encoding)
+
+
+def import_package_modules(package_file_path: str, package_name: str) -> list[ModuleType]:
+    extension = '.py'
+    imported_modules = []
+    for p in sorted(pathlib.Path(os.path.dirname(package_file_path)).iterdir()):
+        if p.name.endswith(extension) and p.is_file():
+            module = p.name[:-len(extension)]
+            if module != '__init__':
+                imported_modules.append(importlib.import_module(f".{module}", package_name))
+    return imported_modules
