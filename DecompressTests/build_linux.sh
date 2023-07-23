@@ -16,7 +16,7 @@ python_download_zip="$dp0/release/$self_name.tar.gz"
 cpython_bin="$dp0/Scripts/bin/python3"
 [[ ! -f "$cpython_bin" ]] && tar -xf "$python_download_zip" -C "$dp0"
 
-"$cpython_bin" -m pip install pygal==3.0.0 airium==0.2.5 rapidgzip==0.7.0 zstandard==0.21.0
+"$cpython_bin" -m pip install pygal==3.0.0 airium==0.2.5 rapidgzip==0.7.0
 "$cpython_bin" -m unittest "$dp0/decompress_tests.py"
 
 cd "$release_version_dirpath"
