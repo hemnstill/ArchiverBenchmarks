@@ -8,7 +8,7 @@ from .bsdtar_tool import get_bsdtar_exe_path
 
 def get_pigz_exe_path():
     if sys.platform.startswith('win'):
-        return os.path.join(common_paths.tools_path,'pigz-2.4.exe')
+        return os.path.join(common_paths.tools_path, 'pigz-2.4.exe')
 
     return 'pigz'
 
