@@ -10,7 +10,7 @@ def get_pigz_exe_path():
     if sys.platform.startswith('win'):
         return os.path.join(common_paths.tools_path,'pigz-2.4.exe')
 
-    raise NotImplementedError(f"platform not supported: '{sys.platform}'")
+    return 'pigz'
 
 
 def extract(file_path: str, output_dir_path: str):
