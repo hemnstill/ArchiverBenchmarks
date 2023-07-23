@@ -3,6 +3,7 @@ import sys
 import unittest
 from contextlib import suppress
 from timeit import timeit
+from airium import Airium
 
 _self_path: str = os.path.dirname(os.path.realpath(__file__))
 root_path = os.path.dirname(_self_path)
@@ -61,6 +62,22 @@ class DecompressTests(unittest.TestCase):
     def setUp(self) -> None:
         for artifact in artifacts_data().values():
             download_artifact(artifact)
+
+    def test_render_html(self):
+        a = Airium()
+
+        a('<!DOCTYPE html>')
+        with a.html(lang="en"):
+            with a.head():
+                a.meta(charset="utf-8")
+                a.title(_t="Execution info")
+
+            with a.body(style="margin: 0;"):
+                a.embed(type="image/svg+xml", src=f'win32.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'linux.svg', style="height: calc(100vh - 5px);")
+
+        os.makedirs(common_paths.render_path, exist_ok=True)
+        io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
 
     def test_extract(self):
         for artifact in artifacts_data().values():

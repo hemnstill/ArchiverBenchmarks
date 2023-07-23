@@ -29,6 +29,7 @@ jobs:
       - uses: actions/download-artifact@v3
       - run: |
           mkdir -p ./_site
+          tar -xf ./build-linux/build-linux.tar.gz -C ./_site
           tar -xf ./build-windows/build-windows.tar.gz -C ./_site
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v2
