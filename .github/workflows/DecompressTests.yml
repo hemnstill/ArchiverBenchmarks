@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
-      - run:
+      - run: |
           mkdir -p ./_site
           tar -xf ./build-windows/build-windows.tar.gz -C ./_site
       - name: Upload site artifact
