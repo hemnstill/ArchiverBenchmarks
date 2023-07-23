@@ -10,7 +10,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 from DecompressTests import wget_tool, bsdtar_tool, io_tools, p7zip_tool, common_paths, models, execution_renderer, \
-    python_archiver_tool, p7zip_zstd_tool, zstd_tool
+    python_archiver_tool, p7zip_zstd_tool, zstd_tool, pigz_tool
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
@@ -31,6 +31,7 @@ def archiver_tools() -> dict[str, models.ArchiverInfo]:
         '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', extract=p7zip_zstd_tool.extract),
         'python-3.11': models.ArchiverInfo(name='python-3.11', extract=python_archiver_tool.extract),
         'zstd-1.5.5': models.ArchiverInfo(name='zstd-1.5.5', extract=zstd_tool.extract),
+        'pigz-2.4': models.ArchiverInfo(name='pigz-2.4', extract=pigz_tool.extract),
     }
 
 
