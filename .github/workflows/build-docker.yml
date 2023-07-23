@@ -22,9 +22,6 @@ jobs:
       - name: build ${{ inputs.workflow }}-ubuntu-${{ inputs.toolset }}
         run: |
           apt update
-          apt install -y software-properties-common
-          add-apt-repository ppa:libzstd/ppa
-          apt update
           apt install -y curl zstd
           ./${{ inputs.workflow }}/build_${{ inputs.toolset }}.sh
 
