@@ -9,7 +9,7 @@ def get_archiver_exe_path():
     if sys.platform.startswith('win'):
         return os.path.join(common_paths.tools_path,'archiver-3.5.1.exe')
 
-    return os.path.join(common_paths.tools_path,'archiver-3.5.1')
+    return os.path.join(common_paths.tools_path, 'archiver-3.5.1')
 
 
 def extract(file_path: str, output_dir_path: str):
