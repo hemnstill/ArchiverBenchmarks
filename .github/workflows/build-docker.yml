@@ -22,7 +22,7 @@ jobs:
       - name: build ${{ inputs.workflow }}-ubuntu-${{ inputs.toolset }}
         run: |
           apt update
-          apt install software-properties-common
+          apt install -y software-properties-common
           add-apt-repository ppa:libzstd/ppa
           apt update
           apt install -y curl zstd
