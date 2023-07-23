@@ -17,5 +17,5 @@ def extract(file_path: str, output_dir_path: str):
     if file_path.endswith(unsupported_formats):
         raise NotImplementedError(f"unar does not support: '{file_path}'")
 
-    subprocess.run(args=f'"{get_unar_exe_path()}" -quiet -output-directory "{output_dir_path}" -force-overwrite "{file_path}"',
+    subprocess.run([get_unar_exe_path(), '-quiet', '-output-directory', output_dir_path, '-force-overwrite', file_path],
                    check=True)
