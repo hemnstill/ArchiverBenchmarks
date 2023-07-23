@@ -16,12 +16,12 @@ from DecompressTests import archiver_tools
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
     return {
-        '200MB.tar': models.ArtifactInfo(name='200MB.tar', size=214394880),
-        '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251),
-        '12MB.tar.gz': models.ArtifactInfo(name='12MB.tar.gz', size=13047645),
-        '33MB.tar.zst': models.ArtifactInfo(name='33MB.tar.zst', size=34635880),
-        '116MB.zip': models.ArtifactInfo(name='116MB.zip', size=122518995),
-        '154MB.tar.gz': models.ArtifactInfo(name='154MB.tar.gz', size=162315691),
+        '200MB.tar': models.ArtifactInfo(name='200MB.tar', size=214394880, files_count=5800),
+        '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251, files_count=949),
+        '12MB.tar.gz': models.ArtifactInfo(name='12MB.tar.gz', size=13047645, files_count=2056),
+        '33MB.tar.zst': models.ArtifactInfo(name='33MB.tar.zst', size=34635880, files_count=5800),
+        '116MB.zip': models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123),
+        '154MB.tar.gz': models.ArtifactInfo(name='154MB.tar.gz', size=162315691, files_count=2150),
     }
 
 
@@ -63,6 +63,16 @@ class DecompressTests(unittest.TestCase):
         for artifact in artifacts_data().values():
             download_artifact(artifact)
 
+    def check_content(self, artifact: models.ArtifactInfo, output_dir_path: str):
+        if not os.path.isdir(output_dir_path):
+            return False
+
+        output_dir_path_files_count = sum([len(files) for r, d, files in os.walk(output_dir_path)])
+        if artifact.files_count != output_dir_path_files_count:
+            print(f'files_count mismatch: {artifact.files_count} != {output_dir_path_files_count}')
+            return False
+        return True
+
     def test_render_html(self):
         a = Airium()
 
@@ -87,6 +97,8 @@ class DecompressTests(unittest.TestCase):
                 execution_time = None
                 with suppress(NotImplementedError):
                     execution_time = round(0.5 * timeit(lambda: archiver.extract(os.path.join(common_paths.data_path, artifact.name), output_dir_path), number=2), 3)
+                if not self.check_content(artifact, output_dir_path):
+                    execution_time = None
                 self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
                                                          artifact=artifact,
                                                          archiver=archiver.name))

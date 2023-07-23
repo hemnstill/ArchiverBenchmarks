@@ -6,6 +6,7 @@ from typing import Callable
 class ArtifactInfo:
     name: str
     size: int
+    files_count: int
 
 
 @dataclasses.dataclass
