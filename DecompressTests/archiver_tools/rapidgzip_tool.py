@@ -9,7 +9,7 @@ def get_rapidgzip_exe_path():
     if sys.platform.startswith('win'):
         return os.path.join(os.path.dirname(sys.executable), 'Scripts', 'rapidgzip.exe')
 
-    return os.path.join(os.path.dirname(sys.executable), 'Scripts', 'rapidgzip')
+    return os.path.join(os.path.dirname(sys.executable), 'rapidgzip')
 
 
 def extract(file_path: str, output_dir_path: str):
