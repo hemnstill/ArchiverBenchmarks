@@ -67,10 +67,6 @@ class DecompressTests(unittest.TestCase):
         for artifact in artifacts_data().values():
             download_artifact(artifact)
 
-        print(f'clean_dir {common_paths.extracted_data_path} ...')
-        if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
-            raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
-
     def check_content(self, artifact: models.ArtifactInfo, output_dir_path: str):
         if not os.path.isdir(output_dir_path):
             return False
@@ -103,6 +99,10 @@ class DecompressTests(unittest.TestCase):
         for artifact in artifacts_data().values():
             for archiver in get_archiver_tools().values():
                 print(f"test_extract '{artifact.name}' with '{archiver.name}'")
+
+                if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
+                    raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
+
                 output_dir_path = os.path.join(common_paths.extracted_data_path, f"{artifact.name}_{archiver.name}")
                 execution_time = None
                 with suppress(NotImplementedError):
