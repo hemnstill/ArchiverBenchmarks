@@ -19,7 +19,7 @@ def render(execution_infos: list[models.ExecutionInfo]) -> None:
     bar_chart.x_labels = get_executions_by_artifact(execution_infos).keys()
 
     os.makedirs(common_paths.render_path, exist_ok=True)
-    bar_chart.render_to_file(os.path.join(common_paths.render_path, f'{sys.platform}.svg'))
+    bar_chart.render_to_file(os.path.join(common_paths.render_path, f"{os.environ['self_toolset_name']}.svg"))
 
 
 def get_executions_by_artifact(execution_infos):
