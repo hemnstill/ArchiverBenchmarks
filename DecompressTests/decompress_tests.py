@@ -90,9 +90,9 @@ class DecompressTests(unittest.TestCase):
                 a.title(_t="Execution info")
 
             with a.body(style="margin: 0;"):
-                a.embed(type="image/svg+xml", src=f'linux.svg', style="height: calc(100vh - 5px);")
-                a.embed(type="image/svg+xml", src=f'windows.svg', style="height: calc(100vh - 5px);")
-                a.embed(type="image/svg+xml", src=f'windows-single.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-linux.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-windows.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-windows-single.svg', style="height: calc(100vh - 5px);")
 
         os.makedirs(common_paths.render_path, exist_ok=True)
         io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
