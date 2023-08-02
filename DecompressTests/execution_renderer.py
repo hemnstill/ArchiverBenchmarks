@@ -8,7 +8,7 @@ from DecompressTests import models, common_paths
 
 def render(execution_infos: list[models.ExecutionInfo]) -> None:
     bar_chart = pygal.Bar()
-    bar_chart.title = sys.platform
+    bar_chart.title = os.environ['self_toolset_name']
 
     for archiver, exec_list_by_archiver in get_executions_by_archiver(execution_infos).items():
         execution_times = []
