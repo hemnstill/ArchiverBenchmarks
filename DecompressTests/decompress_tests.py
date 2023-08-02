@@ -58,9 +58,6 @@ class DecompressTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.execution_info: list[models.ExecutionInfo] = []
-        print(f'clean_dir {common_paths.extracted_data_path} ...')
-        if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
-            raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -69,6 +66,10 @@ class DecompressTests(unittest.TestCase):
     def setUp(self) -> None:
         for artifact in artifacts_data().values():
             download_artifact(artifact)
+
+        print(f'clean_dir {common_paths.extracted_data_path} ...')
+        if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
+            raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
 
     def check_content(self, artifact: models.ArtifactInfo, output_dir_path: str):
         if not os.path.isdir(output_dir_path):
