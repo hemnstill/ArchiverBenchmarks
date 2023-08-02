@@ -15,7 +15,7 @@ from DecompressTests import archiver_tools
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
-    if os.environ['self_toolset_name'] == 'windows-single':
+    if os.environ['self_toolset_name'] == 'build-windows-single':
         return {'git-sdk-64-main.zip': models.ArtifactInfo(name='git-sdk-64-main.zip', size=1407960952, files_count=108168)}
 
     return {
