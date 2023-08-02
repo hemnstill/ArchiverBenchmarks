@@ -15,7 +15,7 @@ from DecompressTests import archiver_tools
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
-    if os.environ['self_toolset_name'] == 'build-windows-single':
+    if os.environ['self_toolset_name'] in ('build-windows-single', 'build-linux-single'):
         return {'git-sdk-64-main.zip': models.ArtifactInfo(name='git-sdk-64-main.zip', size=1407960952, files_count=108168)}
 
     return {
@@ -92,6 +92,7 @@ class DecompressTests(unittest.TestCase):
             with a.body(style="margin: 0;"):
                 a.embed(type="image/svg+xml", src=f'build-linux.svg', style="height: calc(100vh - 5px);")
                 a.embed(type="image/svg+xml", src=f'build-windows.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-linux-single.svg', style="height: calc(100vh - 5px);")
                 a.embed(type="image/svg+xml", src=f'build-windows-single.svg', style="height: calc(100vh - 5px);")
 
         os.makedirs(common_paths.render_path, exist_ok=True)
