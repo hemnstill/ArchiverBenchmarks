@@ -10,8 +10,7 @@ root_path = os.path.dirname(_self_path)
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from DecompressTests import wget_tool, io_tools, common_paths, models, execution_renderer
-from DecompressTests import archiver_tools
+from DecompressTests import io_tools, common_paths, models, execution_renderer, archiver_tools, artifact_tools
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
@@ -47,15 +46,6 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
     }
 
 
-def download_artifact(artifact: models.ArtifactInfo) -> None:
-    artifact_file_path = os.path.join(common_paths.data_path, artifact.name)
-    artifact_url = f'https://github.com/hemnstill/ArchiverBenchmarks/releases/download/init/{artifact.name}'
-    if not os.path.isfile(artifact_file_path) or os.path.getsize(artifact_file_path) != artifact.size:
-        wget_tool.download_url(artifact_url, artifact_file_path)
-    if os.path.getsize(artifact_file_path) != artifact.size:
-        raise IOError(f"Download failed: '{artifact_url}'\n'{artifact.name}' file size {os.path.getsize(artifact_file_path)}, but should be {artifact.size}")
-
-
 class DecompressTests(unittest.TestCase):
 
     @classmethod
@@ -72,7 +62,7 @@ class DecompressTests(unittest.TestCase):
 
     def setUp(self) -> None:
         for artifact in artifacts_data().values():
-            download_artifact(artifact)
+            artifact_tools.download_artifact(artifact)
 
     def check_content(self, artifact: models.ArtifactInfo, output_dir_path: str):
         if not os.path.isdir(output_dir_path):
@@ -119,3 +109,6 @@ class DecompressTests(unittest.TestCase):
                 self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
                                                          artifact=artifact,
                                                          archiver=archiver.name))
+
+    def test_create(self):
+        artifact_tools.create_artifact(models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123))
