@@ -2,7 +2,7 @@ import os
 import pathlib
 
 from DecompressTests import wget_tool, io_tools, common_paths, models
-from DecompressTests import archiver_tools
+from DecompressTests.archiver_tools import bsdtar_tool, igzip_tool
 
 
 def download_artifact(artifact: models.ArtifactInfo) -> str:
@@ -16,13 +16,13 @@ def download_artifact(artifact: models.ArtifactInfo) -> str:
     return artifact_file_path
 
 
-def create_artifact(zip_artifact: models.ArtifactInfo) -> models.ArtifactInfo:
+def create_tar_artifact(zip_artifact: models.ArtifactInfo) -> models.ArtifactInfo:
     if not zip_artifact.name.endswith('.zip'):
         raise ValueError(f"Artifact should be '.zip', got: '{zip_artifact.name}'")
 
     tar_file_name = f'{pathlib.Path(zip_artifact.name).stem}.tar'
     tar_file_path = os.path.join(common_paths.data_path, tar_file_name)
-    print(f'creating {tar_file_path}')
+    print(f"creating '{tar_file_path}'")
     if os.path.isfile(tar_file_path):
         print(f"'{tar_file_path}' already exists. ")
         return models.ArtifactInfo(tar_file_name, os.path.getsize(tar_file_path), zip_artifact.files_count)
@@ -32,5 +32,21 @@ def create_artifact(zip_artifact: models.ArtifactInfo) -> models.ArtifactInfo:
         raise IOError(f'Cannot try_create_or_clean_dir: {output_dir_path}')
 
     zip_file_path = download_artifact(zip_artifact)
-    archiver_tools.bsdtar_tool.extract(zip_file_path, output_dir_path)
-    archiver_tools.bsdtar_tool.create(output_dir_path, tar_file_path)
+    bsdtar_tool.extract(zip_file_path, output_dir_path)
+    bsdtar_tool.create_tar(output_dir_path, tar_file_path)
+    return models.ArtifactInfo(tar_file_name, os.path.getsize(tar_file_path), zip_artifact.files_count)
+
+
+def create_tar_gz_artifact(tar_artifact: models.ArtifactInfo) -> models.ArtifactInfo:
+    tar_gz_file_name = f'{tar_artifact.name}.gz'
+    tar_gz_file_path = os.path.join(common_paths.data_path, tar_gz_file_name)
+
+    print(f"creating '{tar_gz_file_path}'")
+    if os.path.isfile(tar_gz_file_path):
+        print(f"'{tar_gz_file_path}' already exists. ")
+        return models.ArtifactInfo(tar_gz_file_name, os.path.getsize(tar_gz_file_path), tar_artifact.files_count)
+
+    tar_file_path = os.path.join(common_paths.data_path, tar_artifact.name)
+
+    igzip_tool.create_tar_gz(tar_file_path)
+    return models.ArtifactInfo(tar_gz_file_name, os.path.getsize(tar_gz_file_path), tar_artifact.files_count)

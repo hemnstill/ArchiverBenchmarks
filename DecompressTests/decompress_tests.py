@@ -14,12 +14,6 @@ from DecompressTests import io_tools, common_paths, models, execution_renderer, 
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
-    if os.environ['self_toolset_name'] == 'build-local':
-        return {'116MB.zip': models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123)}
-
-    if os.environ['self_toolset_name'] in ('build-windows-single', 'build-linux-single'):
-        return {'git-sdk-64-main.zip': models.ArtifactInfo(name='git-sdk-64-main.zip', size=1407960952, files_count=108168)}
-
     return {
         '200MB.tar': models.ArtifactInfo(name='200MB.tar', size=214394880, files_count=5800),
         '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251, files_count=949),
@@ -60,11 +54,8 @@ class DecompressTests(unittest.TestCase):
     def tearDownClass(cls) -> None:
         execution_renderer.render(cls.execution_info)
 
-    def setUp(self) -> None:
-        for artifact in artifacts_data().values():
-            artifact_tools.download_artifact(artifact)
-
-    def check_content(self, artifact: models.ArtifactInfo, output_dir_path: str):
+    @classmethod
+    def check_content(cls, artifact: models.ArtifactInfo, output_dir_path: str):
         if not os.path.isdir(output_dir_path):
             return False
 
@@ -73,6 +64,22 @@ class DecompressTests(unittest.TestCase):
             print(f'files_count mismatch: {artifact.files_count} != {output_dir_path_files_count}')
             return False
         return True
+
+    def check_extract(self, archiver: models.ArchiverInfo, artifact: models.ArtifactInfo):
+        print(f"test_extract '{artifact.name}' with '{archiver.name}'")
+        if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
+            raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
+        output_dir_path = os.path.join(common_paths.extracted_data_path, f"{artifact.name}_{archiver.name}")
+        execution_time = None
+        with suppress(NotImplementedError):
+            execution_time = round(0.5 * timeit(
+                lambda: archiver.extract(os.path.join(common_paths.data_path, artifact.name), output_dir_path),
+                number=2), 3)
+        if execution_time and not self.check_content(artifact, output_dir_path):
+            execution_time = None
+        self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
+                                                        artifact=artifact,
+                                                        archiver=archiver.name))
 
     def test_render_html(self):
         a = Airium()
@@ -93,22 +100,28 @@ class DecompressTests(unittest.TestCase):
         io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
 
     def test_extract(self):
+        if os.environ['self_toolset_name'] not in ('build-windows', 'build-linux'):
+            return
+
+        for artifact in artifacts_data().values():
+            artifact_tools.download_artifact(artifact)
+
         for artifact in artifacts_data().values():
             for archiver in get_archiver_tools().values():
-                print(f"test_extract '{artifact.name}' with '{archiver.name}'")
+                self.check_extract(archiver, artifact)
 
-                if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
-                    raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
+    def test_extract_single(self):
+        if os.environ['self_toolset_name'] not in ('build-windows-single', 'build-linux-single', 'build-local'):
+            return
 
-                output_dir_path = os.path.join(common_paths.extracted_data_path, f"{artifact.name}_{archiver.name}")
-                execution_time = None
-                with suppress(NotImplementedError):
-                    execution_time = round(0.5 * timeit(lambda: archiver.extract(os.path.join(common_paths.data_path, artifact.name), output_dir_path), number=2), 3)
-                if execution_time and not self.check_content(artifact, output_dir_path):
-                    execution_time = None
-                self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
-                                                         artifact=artifact,
-                                                         archiver=archiver.name))
+        zip_artifact = models.ArtifactInfo(name='git-sdk-64-main.zip', size=1407960952, files_count=108168)
+        if os.environ['self_toolset_name'] == 'build-local':
+            zip_artifact = models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123)
 
-    def test_create(self):
-        artifact_tools.create_artifact(models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123))
+        tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
+        tar_gz_artifact = artifact_tools.create_tar_gz_artifact(tar_artifact)
+
+        for archiver in get_archiver_tools().values():
+           self.check_extract(archiver, tar_artifact)
+           self.check_extract(archiver, zip_artifact)
+           self.check_extract(archiver, tar_gz_artifact)
