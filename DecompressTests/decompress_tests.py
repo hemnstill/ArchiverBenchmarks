@@ -15,6 +15,9 @@ from DecompressTests import archiver_tools
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
+    if os.environ['self_toolset_name'] == 'build-local':
+        return {'116MB.zip': models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123)}
+
     if os.environ['self_toolset_name'] in ('build-windows-single', 'build-linux-single'):
         return {'git-sdk-64-main.zip': models.ArtifactInfo(name='git-sdk-64-main.zip', size=1407960952, files_count=108168)}
 
@@ -58,6 +61,10 @@ class DecompressTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.execution_info: list[models.ExecutionInfo] = []
+        if not os.environ.get('self_toolset_name'):
+            os.environ['self_toolset_name'] = 'build-local'
+
+        print(f"self_toolset_name: {os.environ['self_toolset_name']}")
 
     @classmethod
     def tearDownClass(cls) -> None:
