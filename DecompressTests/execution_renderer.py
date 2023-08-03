@@ -1,9 +1,8 @@
 import os.path
-import sys
 
 import pygal
 
-from DecompressTests import models, common_paths
+from DecompressTests import models, common_paths, artifact_tools
 
 
 def render(execution_infos: list[models.ExecutionInfo]) -> None:
@@ -26,9 +25,9 @@ def get_executions_by_artifact(execution_infos):
     execution_by_artifact: dict[str, list[models.ExecutionInfo]] = {}
     for execution in execution_infos:
         if execution.artifact.name not in execution_by_artifact:
-            execution_by_artifact[execution.artifact.name] = []
+            execution_by_artifact[artifact_tools.get_pretty_name(execution.artifact)] = []
 
-        execution_by_artifact[execution.artifact.name].append(execution)
+        execution_by_artifact[artifact_tools.get_pretty_name(execution.artifact)].append(execution)
     return execution_by_artifact
 
 

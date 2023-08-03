@@ -50,3 +50,8 @@ def create_tar_gz_artifact(tar_artifact: models.ArtifactInfo) -> models.Artifact
 
     igzip_tool.create_tar_gz(tar_file_path)
     return models.ArtifactInfo(tar_gz_file_name, os.path.getsize(tar_gz_file_path), tar_artifact.files_count)
+
+
+def get_pretty_name(artifact: models.ArtifactInfo) -> str:
+    full_ext = ''.join(pathlib.Path(artifact.name).suffixes)
+    return f"{full_ext} {io_tools.byte_to_humanreadable_format(artifact.size)}"
