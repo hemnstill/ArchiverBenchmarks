@@ -111,24 +111,39 @@ class DecompressTests(unittest.TestCase):
                 a.title(_t="Execution info")
 
             with a.body(style="margin: 0;"):
+                a.embed(type="image/svg+xml", src=f'build-linux-small.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-windows-small.svg', style="height: calc(100vh - 5px);")
                 a.embed(type="image/svg+xml", src=f'build-linux.svg', style="height: calc(100vh - 5px);")
                 a.embed(type="image/svg+xml", src=f'build-windows.svg', style="height: calc(100vh - 5px);")
-                a.embed(type="image/svg+xml", src=f'build-linux-single.svg', style="height: calc(100vh - 5px);")
-                a.embed(type="image/svg+xml", src=f'build-windows-single.svg', style="height: calc(100vh - 5px);")
+
+                if not os.environ.get('DISABLE_HEAVY_TESTS'):
+                    a.embed(type="image/svg+xml", src=f'build-linux-large.svg', style="height: calc(100vh - 5px);")
+                    a.embed(type="image/svg+xml", src=f'build-windows-large.svg', style="height: calc(100vh - 5px);")
 
         os.makedirs(common_paths.render_path, exist_ok=True)
         io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
 
-    def test_extract_116MB(self):
+    def test_extract_small(self):
+        if os.environ['self_toolset_name'] not in ('build-windows-small', 'build-linux-small', 'build-local'):
+            return
+
+        zip_artifact = artifacts_data()['13MB.zip']
+        self.check_extract_create_from_zip(zip_artifact)
+
+    def test_extract(self):
         if os.environ['self_toolset_name'] not in ('build-windows', 'build-linux', 'build-local'):
             return
 
         zip_artifact = artifacts_data()['116MB.zip']
         self.check_extract_create_from_zip(zip_artifact)
 
-    def test_extract_1GB(self):
-        if os.environ['self_toolset_name'] not in ('build-windows-single', 'build-linux-single', 'build-local'):
+    def test_extract_large(self):
+        if os.environ.get('DISABLE_HEAVY_TESTS'):
+            print("DISABLE_HEAVY_TESTS")
             return
 
-        zip_artifact = artifacts_data()['13MB.zip']
+        if os.environ['self_toolset_name'] not in ('build-windows-large', 'build-linux-large', 'build-local'):
+            return
+
+        zip_artifact = artifacts_data()['1GB.zip']
         self.check_extract_create_from_zip(zip_artifact)

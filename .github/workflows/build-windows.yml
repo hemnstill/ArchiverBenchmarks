@@ -15,6 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: build ${{ inputs.workflow }}-windows-${{ inputs.toolset }}
+        env:
+          DISABLE_HEAVY_TESTS: ${{ vars.DISABLE_HEAVY_TESTS }}
         run: |
           .tools\busybox.exe sh ${{ inputs.workflow }}\build_${{ inputs.toolset }}.sh
 

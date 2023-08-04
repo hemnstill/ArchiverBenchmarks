@@ -8,26 +8,42 @@ jobs:
     with:
       workflow: ${{ github.workflow }}
 
+  ubuntu-docker-small:
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      workflow: ${{ github.workflow }}
+      toolset: linux-small
+
+  ubuntu-docker-large:
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      workflow: ${{ github.workflow }}
+      toolset: linux-large
+
   windows:
     uses: ./.github/workflows/build-windows.yml
     with:
       workflow: ${{ github.workflow }}
 
-  ubuntu-docker-single:
-    uses: ./.github/workflows/build-docker.yml
-    with:
-      workflow: ${{ github.workflow }}
-      toolset: linux-single
-
-  windows-single:
+  windows-small:
     uses: ./.github/workflows/build-windows.yml
     with:
       workflow: ${{ github.workflow }}
-      toolset: windows-single
+      toolset: windows-small
+
+  windows-large:
+    uses: ./.github/workflows/build-windows.yml
+    with:
+      workflow: ${{ github.workflow }}
+      toolset: windows-large
 
   deploy:
-    needs: [ubuntu-docker, windows, ubuntu-docker-single, windows-single]
-
+    needs: [ubuntu-docker,
+            ubuntu-docker-small,
+            ubuntu-docker-large,
+            windows,
+            windows-small,
+            windows-large]
     permissions:
       pages: write
       id-token: write
@@ -42,9 +58,12 @@ jobs:
       - run: |
           mkdir -p ./_site
           tar -xf ./build-linux/build-linux.tar.gz -C ./_site
+          tar -xf ./build-linux-small/build-linux-small.tar.gz -C ./_site
+          tar -xf ./build-linux-large/build-linux-large.tar.gz -C ./_site
+          
           tar -xf ./build-windows/build-windows.tar.gz -C ./_site
-          tar -xf ./build-linux-single/build-linux-single.tar.gz -C ./_site
-          tar -xf ./build-windows-single/build-windows-single.tar.gz -C ./_site
+          tar -xf ./build-windows-small/build-windows-small.tar.gz -C ./_site
+          tar -xf ./build-windows-large/build-windows-large.tar.gz -C ./_site
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v2
       - name: Deploy to GitHub Pages
