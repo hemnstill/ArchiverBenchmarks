@@ -15,6 +15,7 @@ jobs:
       toolset: linux-small
 
   ubuntu-docker-large:
+    if: ${{ vars.DISABLE_HEAVY_TESTS == '' }}
     uses: ./.github/workflows/build-docker.yml
     with:
       workflow: ${{ github.workflow }}
@@ -32,6 +33,7 @@ jobs:
       toolset: windows-small
 
   windows-large:
+    if: ${{ vars.DISABLE_HEAVY_TESTS == '' }}
     uses: ./.github/workflows/build-windows.yml
     with:
       workflow: ${{ github.workflow }}
