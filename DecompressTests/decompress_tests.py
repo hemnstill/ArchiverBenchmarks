@@ -116,7 +116,7 @@ class DecompressTests(unittest.TestCase):
                 a.embed(type="image/svg+xml", src=f'build-linux.svg', style="height: calc(100vh - 5px);")
                 a.embed(type="image/svg+xml", src=f'build-windows.svg', style="height: calc(100vh - 5px);")
 
-                if not os.environ.get('DISABLE_HEAVY_TESTS'):
+                if os.environ.get('DISABLE_HEAVY_TESTS') != '1':
                     a.embed(type="image/svg+xml", src=f'build-linux-large.svg', style="height: calc(100vh - 5px);")
                     a.embed(type="image/svg+xml", src=f'build-windows-large.svg', style="height: calc(100vh - 5px);")
 
@@ -138,7 +138,7 @@ class DecompressTests(unittest.TestCase):
         self.check_extract_create_from_zip(zip_artifact)
 
     def test_extract_large(self):
-        if os.environ.get('DISABLE_HEAVY_TESTS'):
+        if os.environ.get('DISABLE_HEAVY_TESTS') == '1':
             print("DISABLE_HEAVY_TESTS")
             return
 
