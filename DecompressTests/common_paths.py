@@ -6,6 +6,7 @@ data_path: str = os.path.join(_self_path, 'data')
 extracted_data_path: str = os.path.join(_self_path, 'extracted_data')
 if os.environ.get('RUNNER_TOOL_CACHE') and sys.platform.startswith('win'):
     # C drive has more free space in GitHub actions on Windows.
-    extracted_data_path: str = os.path.join(os.environ['RUNNER_TOOL_CACHE'], 'extracted_data')
+    data_path: str = os.path.join(os.environ['RUNNER_TOOL_CACHE'], 'DecompressTests', 'data')
+    extracted_data_path: str = os.path.join(os.environ['RUNNER_TOOL_CACHE'], 'DecompressTests', 'extracted_data')
 tools_path = os.path.join(os.path.dirname(_self_path), '.tools')
 render_path = os.path.join(_self_path, 'release', 'build')

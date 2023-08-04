@@ -2,7 +2,7 @@ import os
 import pathlib
 
 from DecompressTests import wget_tool, io_tools, common_paths, models
-from DecompressTests.archiver_tools import bsdtar_tool, igzip_tool
+from DecompressTests.archiver_tools import bsdtar_tool, zstd_tool, rapidgzip_tool, igzip_tool
 
 
 def download_artifact(artifact: models.ArtifactInfo) -> str:
@@ -52,6 +52,21 @@ def create_tar_gz_artifact(tar_artifact: models.ArtifactInfo) -> models.Artifact
     return models.ArtifactInfo(tar_gz_file_name, os.path.getsize(tar_gz_file_path), tar_artifact.files_count)
 
 
+def create_tar_zst_artifact(tar_artifact: models.ArtifactInfo) -> models.ArtifactInfo:
+    tar_zst_file_name = f'{tar_artifact.name}.zst'
+    tar_zst_file_path = os.path.join(common_paths.data_path, tar_zst_file_name)
+
+    print(f"creating '{tar_zst_file_path}'")
+    if os.path.isfile(tar_zst_file_path):
+        print(f"'{tar_zst_file_path}' already exists. ")
+        return models.ArtifactInfo(tar_zst_file_name, os.path.getsize(tar_zst_file_path), tar_artifact.files_count)
+
+    tar_file_path = os.path.join(common_paths.data_path, tar_artifact.name)
+
+    zstd_tool.create_tar_zst(tar_file_path)
+    return models.ArtifactInfo(tar_zst_file_name, os.path.getsize(tar_zst_file_path), tar_artifact.files_count)
+
+
 def get_pretty_name(artifact: models.ArtifactInfo) -> str:
     full_ext = ''.join(pathlib.Path(artifact.name).suffixes)
-    return f"{full_ext} {io_tools.byte_to_humanreadable_format(artifact.size)}"
+    return f"{full_ext} {io_tools.byte_to_humanreadable_format(artifact.size, metric=True, precision=2)}"

@@ -25,7 +25,7 @@ def artifacts_data() -> dict[str, models.ArtifactInfo]:
 
 
 def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
-    return {
+    archivers = {
         'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', extract=archiver_tools.bsdtar_tool.extract),
         '7zip-21.07': models.ArchiverInfo(name='7zip-21.07', extract=archiver_tools.p7zip_tool.extract),
         '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', extract=archiver_tools.p7zip_zstd_tool.extract),
@@ -34,10 +34,14 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
         'pigz-2.4': models.ArchiverInfo(name='pigz-2.4', extract=archiver_tools.pigz_tool.extract),
         'rapidgzip-0.7.0': models.ArchiverInfo(name='rapidgzip-0.7.0', extract=archiver_tools.rapidgzip_tool.extract),
         'ripunzip-0.4.0': models.ArchiverInfo(name='ripunzip-0.4.0', extract=archiver_tools.ripunzip_tool.extract),
-        'archiver-3.5.1': models.ArchiverInfo(name='archiver-3.5.1', extract=archiver_tools.archiver_tool.extract),
-        'unar-1.8.1': models.ArchiverInfo(name='unar-1.8.1', extract=archiver_tools.unar_tool.extract),
         'python-3.11': models.ArchiverInfo(name='python-3.11', extract=archiver_tools.python_archiver_tool.extract),
     }
+
+    if sys.platform.startswith('win') and '7zip-21.07' in archivers:
+        # Not used: same as 7z22.01-zstd
+        archivers.pop('7zip-21.07')
+
+    return archivers
 
 
 class DecompressTests(unittest.TestCase):
@@ -120,8 +124,10 @@ class DecompressTests(unittest.TestCase):
 
         tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
         tar_gz_artifact = artifact_tools.create_tar_gz_artifact(tar_artifact)
+        tar_zst_artifact = artifact_tools.create_tar_zst_artifact(tar_artifact)
 
         for archiver in get_archiver_tools().values():
            self.check_extract(archiver, tar_artifact)
            self.check_extract(archiver, zip_artifact)
            self.check_extract(archiver, tar_gz_artifact)
+           self.check_extract(archiver, tar_zst_artifact)
