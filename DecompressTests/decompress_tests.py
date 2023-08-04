@@ -86,7 +86,21 @@ class DecompressTests(unittest.TestCase):
                                                         artifact=artifact,
                                                         archiver=archiver.name))
 
-    def test_render_html(self):
+    def check_extract_create_from_zip(self, zip_artifact):
+        tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
+        tar_gz_artifact = artifact_tools.create_tar_gz_artifact(tar_artifact)
+        tar_zst_artifact = artifact_tools.create_tar_zst_artifact(tar_artifact)
+        p7zip_artifact = artifact_tools.create_7z_artifact(zip_artifact)
+
+        for archiver in get_archiver_tools().values():
+            self.check_extract(archiver, tar_artifact)
+            self.check_extract(archiver, zip_artifact)
+            self.check_extract(archiver, tar_gz_artifact)
+            self.check_extract(archiver, tar_zst_artifact)
+            self.check_extract(archiver, p7zip_artifact)
+
+    @classmethod
+    def test_render_html(cls):
         a = Airium()
 
         a('<!DOCTYPE html>')
@@ -109,34 +123,11 @@ class DecompressTests(unittest.TestCase):
             return
 
         zip_artifact = artifacts_data()['116MB.zip']
-        tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
-        p7zip_artifact = artifact_tools.create_7z_artifact(zip_artifact)
-        tar_gz_artifact = artifact_tools.create_tar_gz_artifact(tar_artifact)
-        tar_zst_artifact = artifact_tools.create_tar_zst_artifact(tar_artifact)
-
-        for archiver in get_archiver_tools().values():
-           self.check_extract(archiver, tar_artifact)
-           self.check_extract(archiver, zip_artifact)
-           self.check_extract(archiver, tar_gz_artifact)
-           self.check_extract(archiver, tar_zst_artifact)
-           self.check_extract(archiver, p7zip_artifact)
+        self.check_extract_create_from_zip(zip_artifact)
 
     def test_extract_1GB(self):
         if os.environ['self_toolset_name'] not in ('build-windows-single', 'build-linux-single', 'build-local'):
             return
 
-        zip_artifact = artifacts_data()['1GB.zip']
-        if os.environ['self_toolset_name'] == 'build-local':
-            zip_artifact = artifacts_data()['13MB.zip']
-
-        tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
-        p7zip_artifact = artifact_tools.create_7z_artifact(zip_artifact)
-        tar_gz_artifact = artifact_tools.create_tar_gz_artifact(tar_artifact)
-        tar_zst_artifact = artifact_tools.create_tar_zst_artifact(tar_artifact)
-
-        for archiver in get_archiver_tools().values():
-           self.check_extract(archiver, tar_artifact)
-           self.check_extract(archiver, zip_artifact)
-           self.check_extract(archiver, tar_gz_artifact)
-           self.check_extract(archiver, tar_zst_artifact)
-           self.check_extract(archiver, p7zip_artifact)
+        zip_artifact = artifacts_data()['13MB.zip']
+        self.check_extract_create_from_zip(zip_artifact)
