@@ -1,14 +1,13 @@
 import os.path
-import sys
 
 import pygal
 
-from DecompressTests import models, common_paths
+from DecompressTests import models, common_paths, artifact_tools
 
 
 def render(execution_infos: list[models.ExecutionInfo]) -> None:
     bar_chart = pygal.Bar()
-    bar_chart.title = sys.platform
+    bar_chart.title = os.environ['self_toolset_name']
 
     for archiver, exec_list_by_archiver in get_executions_by_archiver(execution_infos).items():
         execution_times = []
@@ -19,16 +18,16 @@ def render(execution_infos: list[models.ExecutionInfo]) -> None:
     bar_chart.x_labels = get_executions_by_artifact(execution_infos).keys()
 
     os.makedirs(common_paths.render_path, exist_ok=True)
-    bar_chart.render_to_file(os.path.join(common_paths.render_path, f'{sys.platform}.svg'))
+    bar_chart.render_to_file(os.path.join(common_paths.render_path, f"{os.environ['self_toolset_name']}.svg"))
 
 
 def get_executions_by_artifact(execution_infos):
     execution_by_artifact: dict[str, list[models.ExecutionInfo]] = {}
     for execution in execution_infos:
         if execution.artifact.name not in execution_by_artifact:
-            execution_by_artifact[execution.artifact.name] = []
+            execution_by_artifact[artifact_tools.get_pretty_name(execution.artifact)] = []
 
-        execution_by_artifact[execution.artifact.name].append(execution)
+        execution_by_artifact[artifact_tools.get_pretty_name(execution.artifact)].append(execution)
     return execution_by_artifact
 
 

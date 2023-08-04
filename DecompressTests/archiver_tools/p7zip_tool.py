@@ -22,3 +22,11 @@ def extract(file_path: str, output_dir_path: str):
 
     subprocess.run(f'"{get_7zip_exe_path()}" -bso0 -bd x "{file_path}" -so | "{get_7zip_exe_path()}" -bso0 -bd x -si -ttar "-o{output_dir_path}" -aoa',
                    check=True, shell=True)
+
+
+def create_7z(source_dir_path: str, file_path: str):
+    if not os.path.isdir(source_dir_path):
+        raise IOError(f"'{source_dir_path}' should be directory.")
+
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    subprocess.run([get_7zip_exe_path(), '-mx=1', 'a', file_path, source_dir_path], check=True)

@@ -3,7 +3,7 @@ dp0="$(realpath "$(dirname "$0")")"
 set -e
 
 self_name="python-3.11.3"
-self_toolset_name="build-linux"
+export self_toolset_name="build-linux"
 
 release_version_dirpath="$dp0/release/build"
 mkdir -p "$release_version_dirpath"

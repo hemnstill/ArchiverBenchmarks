@@ -10,23 +10,19 @@ root_path = os.path.dirname(_self_path)
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from DecompressTests import wget_tool, io_tools, common_paths, models, execution_renderer
-from DecompressTests import archiver_tools
+from DecompressTests import io_tools, common_paths, models, execution_renderer, archiver_tools, artifact_tools
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
     return {
-        '200MB.tar': models.ArtifactInfo(name='200MB.tar', size=214394880, files_count=5800),
-        '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251, files_count=949),
-        '12MB.tar.gz': models.ArtifactInfo(name='12MB.tar.gz', size=13047645, files_count=2056),
-        '33MB.tar.zst': models.ArtifactInfo(name='33MB.tar.zst', size=34635880, files_count=5800),
+        '13MB.zip': models.ArtifactInfo(name='13MB.zip', size=13748886, files_count=2056),
         '116MB.zip': models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123),
-        '154MB.tar.gz': models.ArtifactInfo(name='154MB.tar.gz', size=162315691, files_count=2150),
+        '1GB.zip': models.ArtifactInfo(name='git-sdk-64-main.zip', size=1407960952, files_count=108168),
     }
 
 
 def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
-    return {
+    archivers = {
         'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', extract=archiver_tools.bsdtar_tool.extract),
         '7zip-21.07': models.ArchiverInfo(name='7zip-21.07', extract=archiver_tools.p7zip_tool.extract),
         '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', extract=archiver_tools.p7zip_zstd_tool.extract),
@@ -35,19 +31,18 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
         'pigz-2.4': models.ArchiverInfo(name='pigz-2.4', extract=archiver_tools.pigz_tool.extract),
         'rapidgzip-0.7.0': models.ArchiverInfo(name='rapidgzip-0.7.0', extract=archiver_tools.rapidgzip_tool.extract),
         'ripunzip-0.4.0': models.ArchiverInfo(name='ripunzip-0.4.0', extract=archiver_tools.ripunzip_tool.extract),
-        'archiver-3.5.1': models.ArchiverInfo(name='archiver-3.5.1', extract=archiver_tools.archiver_tool.extract),
-        'unar-1.8.1': models.ArchiverInfo(name='unar-1.8.1', extract=archiver_tools.unar_tool.extract),
         'python-3.11': models.ArchiverInfo(name='python-3.11', extract=archiver_tools.python_archiver_tool.extract),
     }
 
+    if sys.platform.startswith('win') and '7zip-21.07' in archivers:
+        # Not used: same as 7z22.01-zstd
+        archivers.pop('7zip-21.07')
 
-def download_artifact(artifact: models.ArtifactInfo) -> None:
-    artifact_file_path = os.path.join(common_paths.data_path, artifact.name)
-    artifact_url = f'https://github.com/hemnstill/ArchiverBenchmarks/releases/download/init/{artifact.name}'
-    if not os.path.isfile(artifact_file_path) or os.path.getsize(artifact_file_path) != artifact.size:
-        wget_tool.download_url(artifact_url, artifact_file_path)
-    if os.path.getsize(artifact_file_path) != artifact.size:
-        raise IOError(f"Download failed: '{artifact_url}'\n'{artifact.name}' file size {os.path.getsize(artifact_file_path)}, but should be {artifact.size}")
+    if not sys.platform.startswith('win') and '7z22.01-zstd' in archivers:
+        # Not working on linux.
+        archivers.pop('7z22.01-zstd')
+
+    return archivers
 
 
 class DecompressTests(unittest.TestCase):
@@ -55,19 +50,17 @@ class DecompressTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.execution_info: list[models.ExecutionInfo] = []
-        print(f'clean_dir {common_paths.extracted_data_path} ...')
-        if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
-            raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
+        if not os.environ.get('self_toolset_name'):
+            os.environ['self_toolset_name'] = 'build-local'
+
+        print(f"self_toolset_name: {os.environ['self_toolset_name']}")
 
     @classmethod
     def tearDownClass(cls) -> None:
         execution_renderer.render(cls.execution_info)
 
-    def setUp(self) -> None:
-        for artifact in artifacts_data().values():
-            download_artifact(artifact)
-
-    def check_content(self, artifact: models.ArtifactInfo, output_dir_path: str):
+    @classmethod
+    def check_content(cls, artifact: models.ArtifactInfo, output_dir_path: str):
         if not os.path.isdir(output_dir_path):
             return False
 
@@ -77,7 +70,37 @@ class DecompressTests(unittest.TestCase):
             return False
         return True
 
-    def test_render_html(self):
+    def check_extract(self, archiver: models.ArchiverInfo, artifact: models.ArtifactInfo):
+        print(f"test_extract '{artifact.name}' with '{archiver.name}'")
+        if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
+            raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
+        output_dir_path = os.path.join(common_paths.extracted_data_path, f"{artifact.name}_{archiver.name}")
+        execution_time = None
+        with suppress(NotImplementedError):
+            execution_time = round(0.5 * timeit(
+                lambda: archiver.extract(os.path.join(common_paths.data_path, artifact.name), output_dir_path),
+                number=2), 3)
+        if execution_time and not self.check_content(artifact, output_dir_path):
+            execution_time = None
+        self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
+                                                        artifact=artifact,
+                                                        archiver=archiver.name))
+
+    def check_extract_create_from_zip(self, zip_artifact):
+        tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
+        tar_gz_artifact = artifact_tools.create_tar_gz_artifact(tar_artifact)
+        tar_zst_artifact = artifact_tools.create_tar_zst_artifact(tar_artifact)
+        p7zip_artifact = artifact_tools.create_7z_artifact(zip_artifact)
+
+        for archiver in get_archiver_tools().values():
+            self.check_extract(archiver, tar_artifact)
+            self.check_extract(archiver, zip_artifact)
+            self.check_extract(archiver, tar_gz_artifact)
+            self.check_extract(archiver, tar_zst_artifact)
+            self.check_extract(archiver, p7zip_artifact)
+
+    @classmethod
+    def test_render_html(cls):
         a = Airium()
 
         a('<!DOCTYPE html>')
@@ -87,22 +110,24 @@ class DecompressTests(unittest.TestCase):
                 a.title(_t="Execution info")
 
             with a.body(style="margin: 0;"):
-                a.embed(type="image/svg+xml", src=f'win32.svg', style="height: calc(100vh - 5px);")
-                a.embed(type="image/svg+xml", src=f'linux.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-linux.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-windows.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-linux-single.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-windows-single.svg', style="height: calc(100vh - 5px);")
 
         os.makedirs(common_paths.render_path, exist_ok=True)
         io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
 
-    def test_extract(self):
-        for artifact in artifacts_data().values():
-            for archiver in get_archiver_tools().values():
-                print(f"test_extract '{artifact.name}' with '{archiver.name}'")
-                output_dir_path = os.path.join(common_paths.extracted_data_path, f"{artifact.name}_{archiver.name}")
-                execution_time = None
-                with suppress(NotImplementedError):
-                    execution_time = round(0.5 * timeit(lambda: archiver.extract(os.path.join(common_paths.data_path, artifact.name), output_dir_path), number=2), 3)
-                if execution_time and not self.check_content(artifact, output_dir_path):
-                    execution_time = None
-                self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
-                                                         artifact=artifact,
-                                                         archiver=archiver.name))
+    def test_extract_116MB(self):
+        if os.environ['self_toolset_name'] not in ('build-windows', 'build-linux'):
+            return
+
+        zip_artifact = artifacts_data()['116MB.zip']
+        self.check_extract_create_from_zip(zip_artifact)
+
+    def test_extract_1GB(self):
+        if os.environ['self_toolset_name'] not in ('build-windows-single', 'build-linux-single', 'build-local'):
+            return
+
+        zip_artifact = artifacts_data()['13MB.zip']
+        self.check_extract_create_from_zip(zip_artifact)

@@ -13,8 +13,20 @@ jobs:
     with:
       workflow: ${{ github.workflow }}
 
+  ubuntu-docker-single:
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      workflow: ${{ github.workflow }}
+      toolset: linux-single
+
+  windows-single:
+    uses: ./.github/workflows/build-windows.yml
+    with:
+      workflow: ${{ github.workflow }}
+      toolset: windows-single
+
   deploy:
-    needs: [ubuntu-docker, windows]
+    needs: [ubuntu-docker, windows, ubuntu-docker-single, windows-single]
 
     permissions:
       pages: write
@@ -31,6 +43,8 @@ jobs:
           mkdir -p ./_site
           tar -xf ./build-linux/build-linux.tar.gz -C ./_site
           tar -xf ./build-windows/build-windows.tar.gz -C ./_site
+          tar -xf ./build-linux-single/build-linux-single.tar.gz -C ./_site
+          tar -xf ./build-windows-single/build-windows-single.tar.gz -C ./_site
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v2
       - name: Deploy to GitHub Pages
