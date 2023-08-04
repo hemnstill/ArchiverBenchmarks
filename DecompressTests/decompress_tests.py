@@ -111,12 +111,14 @@ class DecompressTests(unittest.TestCase):
                 a.title(_t="Execution info")
 
             with a.body(style="margin: 0;"):
-                a.embed(type="image/svg+xml", src=f'build-linux.svg', style="height: calc(100vh - 5px);")
                 a.embed(type="image/svg+xml", src=f'build-linux-small.svg', style="height: calc(100vh - 5px);")
-                a.embed(type="image/svg+xml", src=f'build-linux-large.svg', style="height: calc(100vh - 5px);")
-                a.embed(type="image/svg+xml", src=f'build-windows.svg', style="height: calc(100vh - 5px);")
                 a.embed(type="image/svg+xml", src=f'build-windows-small.svg', style="height: calc(100vh - 5px);")
-                a.embed(type="image/svg+xml", src=f'build-windows-large.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-linux.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-windows.svg', style="height: calc(100vh - 5px);")
+
+                if not os.environ.get('DISABLE_HEAVY_TESTS'):
+                    a.embed(type="image/svg+xml", src=f'build-linux-large.svg', style="height: calc(100vh - 5px);")
+                    a.embed(type="image/svg+xml", src=f'build-windows-large.svg', style="height: calc(100vh - 5px);")
 
         os.makedirs(common_paths.render_path, exist_ok=True)
         io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
@@ -137,6 +139,7 @@ class DecompressTests(unittest.TestCase):
 
     def test_extract_large(self):
         if os.environ.get('DISABLE_HEAVY_TESTS'):
+            print("DISABLE_HEAVY_TESTS")
             return
 
         if os.environ['self_toolset_name'] not in ('build-windows-large', 'build-linux-large', 'build-local'):
