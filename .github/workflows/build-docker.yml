@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: build ${{ inputs.workflow }}-ubuntu-${{ inputs.toolset }}
+        env:
+          DISABLE_HEAVY_TESTS: ${{ vars.DISABLE_HEAVY_TESTS }}
         run: |
           apt update
           apt install -y curl wget zstd pigz unar isal
