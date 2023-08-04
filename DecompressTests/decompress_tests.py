@@ -118,7 +118,7 @@ class DecompressTests(unittest.TestCase):
             return
 
         zip_artifact = models.ArtifactInfo(name='git-sdk-64-main.zip', size=1407960952, files_count=108168)
-        if os.environ['self_toolset_name'] == 'build-local':
+        if os.environ['self_toolset_name'] in ('build-windows-single', 'build-local'):
             zip_artifact = models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123)
 
         tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
