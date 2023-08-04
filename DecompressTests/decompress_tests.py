@@ -15,11 +15,9 @@ from DecompressTests import io_tools, common_paths, models, execution_renderer, 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
     return {
-        '200MB.tar': models.ArtifactInfo(name='200MB.tar', size=214394880, files_count=5800),
+        '13MB.zip': models.ArtifactInfo(name='13MB.zip', size=13748886, files_count=2056),
         '116MB.zip': models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123),
-        '154MB.tar.gz': models.ArtifactInfo(name='154MB.tar.gz', size=162315691, files_count=2150),
-        '33MB.tar.zst': models.ArtifactInfo(name='33MB.tar.zst', size=34635880, files_count=5800),
-        '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251, files_count=949),
+        '1GB.zip': models.ArtifactInfo(name='git-sdk-64-main.zip', size=1407960952, files_count=108168),
     }
 
 
@@ -106,24 +104,30 @@ class DecompressTests(unittest.TestCase):
         os.makedirs(common_paths.render_path, exist_ok=True)
         io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
 
-    def test_extract(self):
+    def test_extract_116MB(self):
         if os.environ['self_toolset_name'] not in ('build-windows', 'build-linux'):
             return
 
-        for artifact in artifacts_data().values():
-            artifact_tools.download_artifact(artifact)
+        zip_artifact = artifacts_data()['116MB.zip']
+        tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
+        p7zip_artifact = artifact_tools.create_7z_artifact(zip_artifact)
+        tar_gz_artifact = artifact_tools.create_tar_gz_artifact(tar_artifact)
+        tar_zst_artifact = artifact_tools.create_tar_zst_artifact(tar_artifact)
 
-        for artifact in artifacts_data().values():
-            for archiver in get_archiver_tools().values():
-                self.check_extract(archiver, artifact)
+        for archiver in get_archiver_tools().values():
+           self.check_extract(archiver, tar_artifact)
+           self.check_extract(archiver, zip_artifact)
+           self.check_extract(archiver, tar_gz_artifact)
+           self.check_extract(archiver, tar_zst_artifact)
+           self.check_extract(archiver, p7zip_artifact)
 
-    def test_extract_single(self):
+    def test_extract_1GB(self):
         if os.environ['self_toolset_name'] not in ('build-windows-single', 'build-linux-single', 'build-local'):
             return
 
-        zip_artifact = models.ArtifactInfo(name='git-sdk-64-main.zip', size=1407960952, files_count=108168)
-        if os.environ['self_toolset_name'] in ('build-windows-single', 'build-local'):
-            zip_artifact = models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123)
+        zip_artifact = artifacts_data()['1GB.zip']
+        if os.environ['self_toolset_name'] == 'build-local':
+            zip_artifact = artifacts_data()['13MB.zip']
 
         tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
         p7zip_artifact = artifact_tools.create_7z_artifact(zip_artifact)
