@@ -40,6 +40,10 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
         # Not used: same as 7z22.01-zstd
         archivers.pop('7zip-21.07')
 
+    if not sys.platform.startswith('win') and '7z22.01-zstd' in archivers:
+        # Not working on linux.
+        archivers.pop('7z22.01-zstd')
+
     return archivers
 
 
