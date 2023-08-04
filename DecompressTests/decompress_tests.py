@@ -31,6 +31,7 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
         'pigz-2.4': models.ArchiverInfo(name='pigz-2.4', extract=archiver_tools.pigz_tool.extract),
         'rapidgzip-0.7.0': models.ArchiverInfo(name='rapidgzip-0.7.0', extract=archiver_tools.rapidgzip_tool.extract),
         'ripunzip-0.4.0': models.ArchiverInfo(name='ripunzip-0.4.0', extract=archiver_tools.ripunzip_tool.extract),
+        'py7zr-0.20.5': models.ArchiverInfo(name='py7zr-0.20.5', extract=archiver_tools.py7zr_tool.extract),
         'python-3.11': models.ArchiverInfo(name='python-3.11', extract=archiver_tools.python_archiver_tool.extract),
     }
 
@@ -119,7 +120,7 @@ class DecompressTests(unittest.TestCase):
         io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
 
     def test_extract_116MB(self):
-        if os.environ['self_toolset_name'] not in ('build-windows', 'build-linux'):
+        if os.environ['self_toolset_name'] not in ('build-windows', 'build-linux', 'build-local'):
             return
 
         zip_artifact = artifacts_data()['116MB.zip']
