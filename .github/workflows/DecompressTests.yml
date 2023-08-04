@@ -40,7 +40,12 @@ jobs:
       toolset: windows-large
 
   deploy:
-    needs: [ubuntu-docker, windows, ubuntu-docker-single, windows-single]
+    needs: [ubuntu-docker,
+            ubuntu-docker-small,
+            ubuntu-docker-large,
+            windows,
+            windows-small,
+            windows-large]
 
     permissions:
       pages: write
