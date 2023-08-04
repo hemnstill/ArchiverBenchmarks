@@ -2,7 +2,7 @@ import os
 import pathlib
 
 from DecompressTests import wget_tool, io_tools, common_paths, models
-from DecompressTests.archiver_tools import bsdtar_tool, zstd_tool, rapidgzip_tool, igzip_tool
+from DecompressTests.archiver_tools import bsdtar_tool, zstd_tool, rapidgzip_tool, igzip_tool, p7zip_tool
 
 
 def download_artifact(artifact: models.ArtifactInfo) -> str:
@@ -65,6 +65,22 @@ def create_tar_zst_artifact(tar_artifact: models.ArtifactInfo) -> models.Artifac
 
     zstd_tool.create_tar_zst(tar_file_path)
     return models.ArtifactInfo(tar_zst_file_name, os.path.getsize(tar_zst_file_path), tar_artifact.files_count)
+
+
+def create_7z_artifact(zip_artifact: models.ArtifactInfo) -> models.ArtifactInfo:
+    p7z_file_name = f'{pathlib.Path(zip_artifact.name).stem}.7z'
+    p7z_file_path = os.path.join(common_paths.data_path, p7z_file_name)
+
+    print(f"creating '{p7z_file_path}'")
+    if os.path.isfile(p7z_file_path):
+        print(f"'{p7z_file_path}' already exists. ")
+        return models.ArtifactInfo(p7z_file_name, os.path.getsize(p7z_file_path), zip_artifact.files_count)
+
+    zip_file_path = download_artifact(zip_artifact)
+    output_dir_path = os.path.join(common_paths.extracted_data_path, f"_{zip_artifact.name}")
+    p7zip_tool.extract(zip_file_path, output_dir_path)
+    p7zip_tool.create_7z(output_dir_path, p7z_file_path)
+    return models.ArtifactInfo(p7z_file_name, os.path.getsize(p7z_file_path), zip_artifact.files_count)
 
 
 def get_pretty_name(artifact: models.ArtifactInfo) -> str:

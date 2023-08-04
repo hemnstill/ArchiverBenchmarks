@@ -16,11 +16,10 @@ from DecompressTests import io_tools, common_paths, models, execution_renderer, 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
     return {
         '200MB.tar': models.ArtifactInfo(name='200MB.tar', size=214394880, files_count=5800),
-        '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251, files_count=949),
-        '12MB.tar.gz': models.ArtifactInfo(name='12MB.tar.gz', size=13047645, files_count=2056),
-        '33MB.tar.zst': models.ArtifactInfo(name='33MB.tar.zst', size=34635880, files_count=5800),
         '116MB.zip': models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123),
         '154MB.tar.gz': models.ArtifactInfo(name='154MB.tar.gz', size=162315691, files_count=2150),
+        '33MB.tar.zst': models.ArtifactInfo(name='33MB.tar.zst', size=34635880, files_count=5800),
+        '7MB.7z': models.ArtifactInfo(name='7MB.7z', size=8023251, files_count=949),
     }
 
 
@@ -123,6 +122,7 @@ class DecompressTests(unittest.TestCase):
             zip_artifact = models.ArtifactInfo(name='116MB.zip', size=122518995, files_count=2123)
 
         tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
+        p7zip_artifact = artifact_tools.create_7z_artifact(zip_artifact)
         tar_gz_artifact = artifact_tools.create_tar_gz_artifact(tar_artifact)
         tar_zst_artifact = artifact_tools.create_tar_zst_artifact(tar_artifact)
 
@@ -131,3 +131,4 @@ class DecompressTests(unittest.TestCase):
            self.check_extract(archiver, zip_artifact)
            self.check_extract(archiver, tar_gz_artifact)
            self.check_extract(archiver, tar_zst_artifact)
+           self.check_extract(archiver, p7zip_artifact)
