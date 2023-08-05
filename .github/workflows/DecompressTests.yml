@@ -54,20 +54,20 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}DecompressTests/
+      url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
       - run: |
-          mkdir -p ./_site
-          tar -xf ./build-linux/build-linux.tar.gz -C ./_site
-          tar -xf ./build-linux-small/build-linux-small.tar.gz -C ./_site
-          tar -xf ./build-linux-large/build-linux-large.tar.gz -C ./_site
+          mkdir -p ./_site/DecompressTests
+          tar -xf ./build-linux/build-linux.tar.gz -C ./_site/DecompressTests
+          tar -xf ./build-linux-small/build-linux-small.tar.gz -C ./_site/DecompressTests
+          tar -xf ./build-linux-large/build-linux-large.tar.gz -C ./_site/DecompressTests
           
           tar -xf ./build-windows/build-windows.tar.gz -C ./_site
-          tar -xf ./build-windows-small/build-windows-small.tar.gz -C ./_site
-          tar -xf ./build-windows-large/build-windows-large.tar.gz -C ./_site
+          tar -xf ./build-windows-small/build-windows-small.tar.gz -C ./_site/DecompressTests
+          tar -xf ./build-windows-large/build-windows-large.tar.gz -C ./_site/DecompressTests
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v2
       - name: Deploy to GitHub Pages

@@ -25,16 +25,16 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}CompressTests/
+      url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
       - run: |
-          mkdir -p ./_site
-          tar -xf ./build-linux/build-linux.tar.gz -C ./_site
+          mkdir -p ./_site/CompressTests
+          tar -xf ./build-linux/build-linux.tar.gz -C ./_site/CompressTests
           
-          tar -xf ./build-windows/build-windows.tar.gz -C ./_site
+          tar -xf ./build-windows/build-windows.tar.gz -C ./_site/CompressTests
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v2
       - name: Deploy to GitHub Pages
