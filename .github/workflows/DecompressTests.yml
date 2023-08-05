@@ -31,13 +31,13 @@ jobs:
       toolset: windows-small
 
   windows:
-    needs: [ubuntu-docker-small]
+    needs: [windows-small]
     uses: ./.github/workflows/build-windows.yml
     with:
       workflow: ${{ github.workflow }}
 
   windows-large:
-    needs: [ubuntu-docker-small]
+    needs: [windows-small]
     uses: ./.github/workflows/build-windows.yml
     with:
       workflow: ${{ github.workflow }}
