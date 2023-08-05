@@ -62,6 +62,8 @@ class CompressTests(unittest.TestCase):
                 a.title(_t="Execution info")
 
             with a.body(style="margin: 0;"):
+                a.embed(type="image/svg+xml", src=f'build-linux-small.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-windows-small.svg', style="height: calc(100vh - 5px);")
                 a.embed(type="image/svg+xml", src=f'build-linux.svg', style="height: calc(100vh - 5px);")
                 a.embed(type="image/svg+xml", src=f'build-windows.svg', style="height: calc(100vh - 5px);")
 
