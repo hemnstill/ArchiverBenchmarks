@@ -1,8 +1,8 @@
 import os
 import pathlib
 
-from DecompressTests import wget_tool, io_tools, common_paths, models
-from DecompressTests.archiver_tools import bsdtar_tool, zstd_tool, rapidgzip_tool, igzip_tool, p7zip_tool
+from ArchiverCommon import wget_tool, io_tools, common_paths, models
+from ArchiverCommon.archiver_tools import bsdtar_tool, zstd_tool, igzip_tool, p7zip_tool
 
 
 def download_artifact(artifact: models.ArtifactInfo) -> str:

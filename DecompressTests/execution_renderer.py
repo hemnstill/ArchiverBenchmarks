@@ -2,7 +2,7 @@ import os.path
 
 import pygal
 
-from DecompressTests import models, common_paths, artifact_tools
+from ArchiverCommon import artifact_tools, models, common_paths
 
 
 def render(execution_infos: list[models.ExecutionInfo]) -> None:

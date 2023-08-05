@@ -7,3 +7,7 @@ DecompressTests/_rendered/
 DecompressTests/release/
 DecompressTests/Scripts/
 DecompressTests/build-*.md
+
+.tools/extracted_data
+.tools/data
+.tools/release

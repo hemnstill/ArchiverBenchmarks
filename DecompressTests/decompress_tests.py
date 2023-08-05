@@ -10,7 +10,9 @@ root_path = os.path.dirname(_self_path)
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from DecompressTests import io_tools, common_paths, models, execution_renderer, archiver_tools, artifact_tools
+
+from ArchiverCommon import archiver_tools, artifact_tools, io_tools, common_paths, models
+from DecompressTests import execution_renderer
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
