@@ -1,4 +1,4 @@
-name: DecompressTests
+name: CompressTests
 
 on: [pull_request, workflow_dispatch]
 
@@ -16,13 +16,6 @@ jobs:
     with:
       workflow: ${{ github.workflow }}
 
-  linux-large:
-    needs: [linux-small]
-    uses: ./.github/workflows/build-docker.yml
-    with:
-      workflow: ${{ github.workflow }}
-      toolset: linux-large
-
   windows-small:
     if: ${{ vars.CURRENT_TOOL == github.workflow }}
     uses: ./.github/workflows/build-windows.yml
@@ -36,25 +29,16 @@ jobs:
     with:
       workflow: ${{ github.workflow }}
 
-  windows-large:
-    needs: [windows-small]
-    uses: ./.github/workflows/build-windows.yml
-    with:
-      workflow: ${{ github.workflow }}
-      toolset: windows-large
-
   deploy:
     needs: [linux,
-            linux-large,
-            windows,
-            windows-large]
+            windows]
     permissions:
       pages: write
       id-token: write
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}DecompressTests
+      url: ${{ steps.deployment.outputs.page_url }}CompressTests
 
     runs-on: ubuntu-latest
     steps:
@@ -63,14 +47,12 @@ jobs:
           ref: 'gh-pages'
       - uses: actions/download-artifact@v3
       - run: |
-          mkdir -p ./_site/DecompressTests
-          tar -xf ./build-linux/build-linux.tar.gz -C ./_site/DecompressTests
-          tar -xf ./build-linux-small/build-linux-small.tar.gz -C ./_site/DecompressTests
-          tar -xf ./build-linux-large/build-linux-large.tar.gz -C ./_site/DecompressTests
+          mkdir -p ./_site/CompressTests
+          tar -xf ./build-linux-small/build-linux-small.tar.gz -C ./_site/CompressTests
+          tar -xf ./build-linux/build-linux.tar.gz -C ./_site/CompressTests
           
-          tar -xf ./build-windows/build-windows.tar.gz -C ./_site
-          tar -xf ./build-windows-small/build-windows-small.tar.gz -C ./_site/DecompressTests
-          tar -xf ./build-windows-large/build-windows-large.tar.gz -C ./_site/DecompressTests
+          tar -xf ./build-windows-small/build-windows-small.tar.gz -C ./_site/CompressTests
+          tar -xf ./build-windows/build-windows.tar.gz -C ./_site/CompressTests
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v2
       - name: Deploy to GitHub Pages

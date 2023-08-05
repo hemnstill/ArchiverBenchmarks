@@ -1,13 +1,14 @@
 import os.path
+from datetime import datetime
 
 import pygal
 
-from DecompressTests import models, common_paths, artifact_tools
+from ArchiverCommon import artifact_tools, models
 
 
-def render(execution_infos: list[models.ExecutionInfo]) -> None:
+def render(execution_infos: list[models.ExecutionInfo], render_path) -> None:
     bar_chart = pygal.Bar()
-    bar_chart.title = os.environ['self_toolset_name']
+    bar_chart.title = f"{os.environ['self_toolset_name']} {datetime.now()}"
 
     for archiver, exec_list_by_archiver in get_executions_by_archiver(execution_infos).items():
         execution_times = []
@@ -17,8 +18,7 @@ def render(execution_infos: list[models.ExecutionInfo]) -> None:
 
     bar_chart.x_labels = get_executions_by_artifact(execution_infos).keys()
 
-    os.makedirs(common_paths.render_path, exist_ok=True)
-    bar_chart.render_to_file(os.path.join(common_paths.render_path, f"{os.environ['self_toolset_name']}.svg"))
+    bar_chart.render_to_file(os.path.join(render_path, f"{os.environ['self_toolset_name']}.svg"))
 
 
 def get_executions_by_artifact(execution_infos):

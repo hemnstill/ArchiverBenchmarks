@@ -150,3 +150,7 @@ def byte_to_humanreadable_format(num: Union[int, float], metric: bool = False, p
             num /= unit_step
 
     return precision_formats[precision].format("-" if is_negative else "", num, unit)
+
+
+def get_name_without_extensions(file_path: str) -> str:
+    return pathlib.Path(pathlib.Path(file_path).stem).stem
