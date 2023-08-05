@@ -97,8 +97,25 @@ class CompressTests(unittest.TestCase):
                                                         artifact=artifact_info,
                                                         archiver=archiver.name))
 
-    def test_create(self):
+    def test_create_small(self):
+        if os.environ['self_toolset_name'] not in ('build-windows-small', 'build-linux-small', 'build-local'):
+            return
+        
         zip_artifact = artifacts_data()['13MB.zip']
+        extract_info = artifact_tools.extract_artifact(zip_artifact)
+
+        for archiver in get_archiver_tools().values():
+            self.check_create(archiver, extract_info, '.tar')
+            self.check_create(archiver, extract_info, '.zip')
+            self.check_create(archiver, extract_info, '.tar.gz')
+            self.check_create(archiver, extract_info, '.tar.zst')
+            self.check_create(archiver, extract_info, '.7z')
+
+    def test_create(self):
+        if os.environ['self_toolset_name'] not in ('build-windows', 'build-linux', 'build-local'):
+            return
+
+        zip_artifact = artifacts_data()['116MB.zip']
         extract_info = artifact_tools.extract_artifact(zip_artifact)
 
         for archiver in get_archiver_tools().values():

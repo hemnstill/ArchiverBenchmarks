@@ -3,21 +3,34 @@ name: CompressTests
 on: [pull_request, workflow_dispatch]
 
 jobs:
-  ubuntu-docker:
+  linux-small:
     if: ${{ vars.CURRENT_TOOL == github.workflow }}
     uses: ./.github/workflows/build-docker.yml
     with:
       workflow: ${{ github.workflow }}
+      toolset: linux-small
 
-  windows:
+  linux:
+    needs: [windows-small]
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      workflow: ${{ github.workflow }}
+
+  windows-small:
     if: ${{ vars.CURRENT_TOOL == github.workflow }}
     uses: ./.github/workflows/build-windows.yml
     with:
       workflow: ${{ github.workflow }}
+      toolset: windows-small
 
+  windows:
+    needs: [windows-small]
+    uses: ./.github/workflows/build-windows.yml
+    with:
+      workflow: ${{ github.workflow }}
 
   deploy:
-    needs: [ubuntu-docker,
+    needs: [linux,
             windows]
     permissions:
       pages: write
@@ -35,8 +48,10 @@ jobs:
       - uses: actions/download-artifact@v3
       - run: |
           mkdir -p ./_site/CompressTests
+          tar -xf ./build-linux-small/build-linux-small.tar.gz -C ./_site/CompressTests
           tar -xf ./build-linux/build-linux.tar.gz -C ./_site/CompressTests
           
+          tar -xf ./build-windows-small/build-windows-small.tar.gz -C ./_site/CompressTests
           tar -xf ./build-windows/build-windows.tar.gz -C ./_site/CompressTests
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v2
