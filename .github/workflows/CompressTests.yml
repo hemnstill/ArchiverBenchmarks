@@ -1,0 +1,40 @@
+name: CompressTests
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  ubuntu-docker:
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      workflow: ${{ github.workflow }}
+
+  windows:
+    uses: ./.github/workflows/build-windows.yml
+    with:
+      workflow: ${{ github.workflow }}
+
+
+  deploy:
+    needs: [ubuntu-docker,
+            windows]
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+      - run: |
+          mkdir -p ./_site/CompressTests
+          tar -xf ./build-linux/build-linux.tar.gz -C ./_site/CompressTests
+          
+          tar -xf ./build-windows/build-windows.tar.gz -C ./_site/CompressTests
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v2
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
