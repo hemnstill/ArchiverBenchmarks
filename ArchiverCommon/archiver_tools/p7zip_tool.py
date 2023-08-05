@@ -35,7 +35,7 @@ def create_tar_gz(source_dir_path: str, file_path: str):
     if not os.path.isdir(source_dir_path):
         raise IOError(f"'{source_dir_path}' should be directory.")
 
-    subprocess.run(args=f'"{get_7zip_exe_path()}" -bso0 -bd a -ttar -so -an "{source_dir_path}" | "{get_7zip_exe_path()}" -bso0 -bd a -tgzip -si "{file_path}"',
+    subprocess.run(args=f'"{get_7zip_exe_path()}" -bso0 -bd a -ttar -so -an "{source_dir_path}" | "{get_7zip_exe_path()}" -bso0 -bd a -tgzip -mx=1 -si "{file_path}"',
                    check=True, shell=True)
 
 
