@@ -100,7 +100,7 @@ class CompressTests(unittest.TestCase):
     def test_create_small(self):
         if os.environ['self_toolset_name'] not in ('build-windows-small', 'build-linux-small', 'build-local'):
             return
-        
+
         zip_artifact = artifacts_data()['13MB.zip']
         extract_info = artifact_tools.extract_artifact(zip_artifact)
 

@@ -11,7 +11,7 @@ jobs:
       toolset: linux-small
 
   linux:
-    needs: [windows-small]
+    needs: [linux-small]
     uses: ./.github/workflows/build-docker.yml
     with:
       workflow: ${{ github.workflow }}
