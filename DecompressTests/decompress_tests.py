@@ -62,17 +62,6 @@ class DecompressTests(unittest.TestCase):
     def tearDownClass(cls) -> None:
         execution_renderer.render(cls.execution_info)
 
-    @classmethod
-    def check_content(cls, artifact: models.ArtifactInfo, output_dir_path: str):
-        if not os.path.isdir(output_dir_path):
-            return False
-
-        output_dir_path_files_count = sum([len(files) for r, d, files in os.walk(output_dir_path)])
-        if artifact.files_count != output_dir_path_files_count:
-            print(f'files_count mismatch: {artifact.files_count} != {output_dir_path_files_count}')
-            return False
-        return True
-
     def check_extract(self, archiver: models.ArchiverInfo, artifact: models.ArtifactInfo):
         print(f"test_extract '{artifact.name}' with '{archiver.name}'")
         if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
@@ -83,7 +72,7 @@ class DecompressTests(unittest.TestCase):
             execution_time = round(0.5 * timeit(
                 lambda: archiver.extract(os.path.join(common_paths.data_path, artifact.name), output_dir_path),
                 number=2), 3)
-        if execution_time and not self.check_content(artifact, output_dir_path):
+        if execution_time and not artifact_tools.check_content(artifact, output_dir_path):
             execution_time = None
         self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
                                                         artifact=artifact,

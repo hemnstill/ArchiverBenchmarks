@@ -3,6 +3,7 @@ import pathlib
 
 from ArchiverCommon import wget_tool, io_tools, common_paths, models
 from ArchiverCommon.archiver_tools import bsdtar_tool, zstd_tool, igzip_tool, p7zip_tool
+from ArchiverCommon.io_tools import get_name_without_extensions
 
 
 def download_artifact(artifact: models.ArtifactInfo) -> str:
@@ -86,3 +87,32 @@ def create_7z_artifact(zip_artifact: models.ArtifactInfo) -> models.ArtifactInfo
 def get_pretty_name(artifact: models.ArtifactInfo) -> str:
     full_ext = ''.join(pathlib.Path(artifact.name).suffixes)
     return f"{full_ext} {io_tools.byte_to_humanreadable_format(artifact.size, metric=True, precision=2)}"
+
+
+def extract_artifact(zip_artifact: models.ArtifactInfo) -> models.ArtifactTargetInfo:
+    if not zip_artifact.name.endswith('.zip'):
+        raise ValueError(f"Artifact should be '.zip', got: '{zip_artifact.name}'")
+
+    output_dir_name = get_name_without_extensions(zip_artifact.name)
+    output_dir_path = os.path.join(common_paths.data_path, output_dir_name)
+    if not io_tools.try_create_or_clean_dir(output_dir_path):
+        raise IOError(f'Cannot try_create_or_clean_dir: {output_dir_path}')
+
+    zip_file_path = download_artifact(zip_artifact)
+    print(f"extracting to '{output_dir_path}'")
+    bsdtar_tool.extract(zip_file_path, output_dir_path)
+    if not check_content(zip_artifact, output_dir_path):
+        raise IOError(f"check_content failed: '{zip_file_path}'")
+
+    return models.ArtifactTargetInfo(name=output_dir_name, files_count=zip_artifact.files_count)
+
+
+def check_content(artifact: models.ArtifactInfo, output_dir_path: str):
+    if not os.path.isdir(output_dir_path):
+        return False
+
+    output_dir_path_files_count = sum([len(files) for r, d, files in os.walk(output_dir_path)])
+    if artifact.files_count != output_dir_path_files_count:
+        print(f'files_count mismatch: {artifact.files_count} != {output_dir_path_files_count}')
+        return False
+    return True

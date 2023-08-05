@@ -12,7 +12,8 @@ class ArtifactInfo:
 @dataclasses.dataclass
 class ArchiverInfo:
     name: str
-    extract: Callable
+    extract: Callable = None
+    create: Callable = None
 
 
 @dataclasses.dataclass
@@ -20,3 +21,9 @@ class ExecutionInfo:
     execution_time: float
     artifact: ArtifactInfo
     archiver: str
+
+
+@dataclasses.dataclass
+class ArtifactTargetInfo:
+    name: str
+    files_count: int

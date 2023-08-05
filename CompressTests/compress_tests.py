@@ -1,6 +1,11 @@
 import unittest
+import os
+from contextlib import suppress
+from timeit import timeit
 
-from ArchiverCommon import artifact_tools, models
+from ArchiverCommon import artifact_tools, models, common_paths, io_tools, archiver_tools
+from ArchiverCommon.io_tools import get_name_without_extensions
+from DecompressTests import execution_renderer
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
@@ -11,8 +16,56 @@ def artifacts_data() -> dict[str, models.ArtifactInfo]:
     }
 
 
+def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
+    archivers = {
+        'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', create=archiver_tools.bsdtar_tool.create),
+    }
+    return archivers
+
+
 class CompressTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.execution_info: list[models.ExecutionInfo] = []
+        if not os.environ.get('self_toolset_name'):
+            os.environ['self_toolset_name'] = 'build-local'
+
+        print(f"self_toolset_name: {os.environ['self_toolset_name']}")
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        execution_renderer.render(cls.execution_info)
+
+    def check_create(self, archiver: models.ArchiverInfo, artifact_target: models.ArtifactTargetInfo, extension: str):
+        artifact_name = f"{artifact_target.name}{extension}"
+        print(f"test_create '{artifact_name}' with '{archiver.name}'")
+
+        if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
+            raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
+
+        source_dir_path = os.path.join(common_paths.data_path, f"{get_name_without_extensions(artifact_target.name)}")
+        execution_time = None
+        with suppress(NotImplementedError):
+            execution_time = round(0.5 * timeit(
+                lambda: archiver.create(source_dir_path, os.path.join(common_paths.extracted_data_path,
+                                                                      artifact_name)),
+                number=2), 3)
+        # todo: check_content
+        artifact_size = os.path.getsize(os.path.join(common_paths.extracted_data_path, artifact_name))
+        artifact_info = models.ArtifactInfo(name=artifact_name,
+                                            size=artifact_size,
+                                            files_count=artifact_target.files_count)
+        self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
+                                                        artifact=artifact_info,
+                                                        archiver=archiver.name))
 
     def test_create(self):
         zip_artifact = artifacts_data()['13MB.zip']
-        tar_artifact = artifact_tools.create_tar_artifact(zip_artifact)
+        extract_info = artifact_tools.extract_artifact(zip_artifact)
+
+        for archiver in get_archiver_tools().values():
+            self.check_create(archiver, extract_info, '.tar')
+            self.check_create(archiver, extract_info, '.zip')
+            self.check_create(archiver, extract_info, '.tar.gz')
+            self.check_create(archiver, extract_info, '.tar.zst')
+            self.check_create(archiver, extract_info, '.7z')
