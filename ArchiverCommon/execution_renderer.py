@@ -2,10 +2,10 @@ import os.path
 
 import pygal
 
-from ArchiverCommon import artifact_tools, models, common_paths
+from ArchiverCommon import artifact_tools, models
 
 
-def render(execution_infos: list[models.ExecutionInfo]) -> None:
+def render(execution_infos: list[models.ExecutionInfo], render_path) -> None:
     bar_chart = pygal.Bar()
     bar_chart.title = os.environ['self_toolset_name']
 
@@ -17,8 +17,7 @@ def render(execution_infos: list[models.ExecutionInfo]) -> None:
 
     bar_chart.x_labels = get_executions_by_artifact(execution_infos).keys()
 
-    os.makedirs(common_paths.render_path, exist_ok=True)
-    bar_chart.render_to_file(os.path.join(common_paths.render_path, f"{os.environ['self_toolset_name']}.svg"))
+    bar_chart.render_to_file(os.path.join(render_path, f"{os.environ['self_toolset_name']}.svg"))
 
 
 def get_executions_by_artifact(execution_infos):

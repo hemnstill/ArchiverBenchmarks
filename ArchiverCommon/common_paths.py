@@ -10,4 +10,7 @@ if os.environ.get('RUNNER_TOOL_CACHE') and sys.platform.startswith('win'):
     data_path: str = os.path.join(os.environ['RUNNER_TOOL_CACHE'], 'DecompressTests', 'data')
     extracted_data_path: str = os.path.join(os.environ['RUNNER_TOOL_CACHE'], 'DecompressTests', 'extracted_data')
 
-render_path = os.path.join(tools_path, 'release', 'build')
+
+def create_render_path(workflow_dir_path: str):
+    os.makedirs(workflow_dir_path, exist_ok=True)
+    return os.path.join(workflow_dir_path, 'release', 'build')

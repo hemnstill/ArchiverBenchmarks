@@ -11,8 +11,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 
-from ArchiverCommon import archiver_tools, artifact_tools, io_tools, common_paths, models
-from DecompressTests import execution_renderer
+from ArchiverCommon import archiver_tools, artifact_tools, io_tools, common_paths, models, execution_renderer
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
@@ -60,7 +59,8 @@ class DecompressTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        execution_renderer.render(cls.execution_info)
+        render_path = common_paths.create_render_path(_self_path)
+        execution_renderer.render(cls.execution_info, render_path)
 
     def check_extract(self, archiver: models.ArchiverInfo, artifact: models.ArtifactInfo):
         print(f"test_extract '{artifact.name}' with '{archiver.name}'")
@@ -91,8 +91,7 @@ class DecompressTests(unittest.TestCase):
             self.check_extract(archiver, tar_zst_artifact)
             self.check_extract(archiver, p7zip_artifact)
 
-    @classmethod
-    def test_render_html(cls):
+    def test_render_html(self):
         a = Airium()
 
         a('<!DOCTYPE html>')
@@ -111,8 +110,8 @@ class DecompressTests(unittest.TestCase):
                     a.embed(type="image/svg+xml", src=f'build-linux-large.svg', style="height: calc(100vh - 5px);")
                     a.embed(type="image/svg+xml", src=f'build-windows-large.svg', style="height: calc(100vh - 5px);")
 
-        os.makedirs(common_paths.render_path, exist_ok=True)
-        io_tools.write_text(os.path.join(common_paths.render_path, 'index.html'), str(a))
+        render_path = common_paths.create_render_path(_self_path)
+        io_tools.write_text(os.path.join(render_path, 'index.html'), str(a))
 
     def test_extract_small(self):
         if os.environ['self_toolset_name'] not in ('build-windows-small', 'build-linux-small', 'build-local'):

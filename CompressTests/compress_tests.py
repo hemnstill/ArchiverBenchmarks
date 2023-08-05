@@ -3,10 +3,12 @@ import unittest
 import os
 from contextlib import suppress
 from timeit import timeit
+from airium import Airium
 
-from ArchiverCommon import artifact_tools, models, common_paths, io_tools, archiver_tools
+from ArchiverCommon import artifact_tools, models, common_paths, io_tools, archiver_tools, execution_renderer
 from ArchiverCommon.io_tools import get_name_without_extensions
-from DecompressTests import execution_renderer
+
+_self_path: str = os.path.dirname(os.path.realpath(__file__))
 
 
 def artifacts_data() -> dict[str, models.ArtifactInfo]:
@@ -47,7 +49,24 @@ class CompressTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        execution_renderer.render(cls.execution_info)
+        render_path = common_paths.create_render_path(_self_path)
+        execution_renderer.render(cls.execution_info, render_path)
+
+    def test_render_html(self):
+        a = Airium()
+
+        a('<!DOCTYPE html>')
+        with a.html(lang="en"):
+            with a.head():
+                a.meta(charset="utf-8")
+                a.title(_t="Execution info")
+
+            with a.body(style="margin: 0;"):
+                a.embed(type="image/svg+xml", src=f'build-linux.svg', style="height: calc(100vh - 5px);")
+                a.embed(type="image/svg+xml", src=f'build-windows.svg', style="height: calc(100vh - 5px);")
+
+        render_path = common_paths.create_render_path(_self_path)
+        io_tools.write_text(os.path.join(render_path, 'index.html'), str(a))
 
     def check_create(self, archiver: models.ArchiverInfo, artifact_target: models.ArtifactTargetInfo, extension: str):
         artifact_name = f"{artifact_target.name}{extension}"
