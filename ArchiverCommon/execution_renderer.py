@@ -1,4 +1,5 @@
 import os.path
+from datetime import datetime
 
 import pygal
 
@@ -7,7 +8,7 @@ from ArchiverCommon import artifact_tools, models
 
 def render(execution_infos: list[models.ExecutionInfo], render_path) -> None:
     bar_chart = pygal.Bar()
-    bar_chart.title = os.environ['self_toolset_name']
+    bar_chart.title = f"{os.environ['self_toolset_name']} {datetime.now()}"
 
     for archiver, exec_list_by_archiver in get_executions_by_archiver(execution_infos).items():
         execution_times = []

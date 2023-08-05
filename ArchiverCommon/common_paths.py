@@ -12,5 +12,6 @@ if os.environ.get('RUNNER_TOOL_CACHE') and sys.platform.startswith('win'):
 
 
 def create_render_path(workflow_dir_path: str):
-    os.makedirs(workflow_dir_path, exist_ok=True)
-    return os.path.join(workflow_dir_path, 'release', 'build')
+    render_path = os.path.join(workflow_dir_path, 'release', 'build')
+    os.makedirs(render_path, exist_ok=True)
+    return render_path
