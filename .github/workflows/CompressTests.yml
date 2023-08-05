@@ -4,11 +4,13 @@ on: [pull_request, workflow_dispatch]
 
 jobs:
   ubuntu-docker:
+    if: ${{ vars.CURRENT_TOOL == github.workflow }}
     uses: ./.github/workflows/build-docker.yml
     with:
       workflow: ${{ github.workflow }}
 
   windows:
+    if: ${{ vars.CURRENT_TOOL == github.workflow }}
     uses: ./.github/workflows/build-windows.yml
     with:
       workflow: ${{ github.workflow }}
