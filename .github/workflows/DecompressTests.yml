@@ -54,7 +54,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}/DecompressTests
+      url: ${{ steps.deployment.outputs.page_url }}DecompressTests/
 
     runs-on: ubuntu-latest
     steps:
