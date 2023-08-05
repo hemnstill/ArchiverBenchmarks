@@ -3,35 +3,41 @@ name: DecompressTests
 on: [pull_request, workflow_dispatch]
 
 jobs:
-  ubuntu-docker:
-    uses: ./.github/workflows/build-docker.yml
-    with:
-      workflow: ${{ github.workflow }}
-
   ubuntu-docker-small:
+    if: ${{ vars.CURRENT_TOOL == github.workflow }}
     uses: ./.github/workflows/build-docker.yml
     with:
       workflow: ${{ github.workflow }}
       toolset: linux-small
 
+  ubuntu-docker:
+    needs: [ubuntu-docker-small]
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      workflow: ${{ github.workflow }}
+
   ubuntu-docker-large:
+    needs: [ubuntu-docker-small]
     uses: ./.github/workflows/build-docker.yml
     with:
       workflow: ${{ github.workflow }}
       toolset: linux-large
 
-  windows:
-    uses: ./.github/workflows/build-windows.yml
-    with:
-      workflow: ${{ github.workflow }}
-
   windows-small:
+    if: ${{ vars.CURRENT_TOOL == github.workflow }}
     uses: ./.github/workflows/build-windows.yml
     with:
       workflow: ${{ github.workflow }}
       toolset: windows-small
 
+  windows:
+    needs: [ubuntu-docker-small]
+    uses: ./.github/workflows/build-windows.yml
+    with:
+      workflow: ${{ github.workflow }}
+
   windows-large:
+    needs: [ubuntu-docker-small]
     uses: ./.github/workflows/build-windows.yml
     with:
       workflow: ${{ github.workflow }}
