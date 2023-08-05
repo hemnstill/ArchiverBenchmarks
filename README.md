@@ -1,3 +1,3 @@
 # ArchiverBenchmarks
 
-https://hemnstill.github.io/ArchiverBenchmarks/
+https://hemnstill.github.io/ArchiverBenchmarks/DecompressTests
