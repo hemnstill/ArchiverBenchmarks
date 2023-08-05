@@ -1,3 +1,4 @@
+import sys
 import unittest
 import os
 from contextlib import suppress
@@ -19,7 +20,18 @@ def artifacts_data() -> dict[str, models.ArtifactInfo]:
 def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
     archivers = {
         'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', create=archiver_tools.bsdtar_tool.create),
+        '7zip-21.07': models.ArchiverInfo(name='7zip-21.07', create=archiver_tools.p7zip_tool.create),
+        '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', create=archiver_tools.p7zip_zstd_tool.create),
     }
+
+    if sys.platform.startswith('win') and '7zip-21.07' in archivers:
+        # Not used: same as 7z22.01-zstd
+        archivers.pop('7zip-21.07')
+
+    if not sys.platform.startswith('win') and '7z22.01-zstd' in archivers:
+        # Not working on linux.
+        archivers.pop('7z22.01-zstd')
+
     return archivers
 
 
@@ -27,6 +39,7 @@ class CompressTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.execution_info: list[models.ExecutionInfo] = []
+        cls.first_sizes: dict[str, int] = {}
         if not os.environ.get('self_toolset_name'):
             os.environ['self_toolset_name'] = 'build-local'
 
@@ -39,21 +52,27 @@ class CompressTests(unittest.TestCase):
     def check_create(self, archiver: models.ArchiverInfo, artifact_target: models.ArtifactTargetInfo, extension: str):
         artifact_name = f"{artifact_target.name}{extension}"
         print(f"test_create '{artifact_name}' with '{archiver.name}'")
-
         if not io_tools.try_create_or_clean_dir(common_paths.extracted_data_path):
             raise IOError(f'Cannot try_create_or_clean_dir: {common_paths.extracted_data_path}')
 
         source_dir_path = os.path.join(common_paths.data_path, f"{get_name_without_extensions(artifact_target.name)}")
+        output_file_path = os.path.join(common_paths.extracted_data_path, artifact_name)
         execution_time = None
         with suppress(NotImplementedError):
             execution_time = round(0.5 * timeit(
-                lambda: archiver.create(source_dir_path, os.path.join(common_paths.extracted_data_path,
-                                                                      artifact_name)),
+                lambda: archiver.create(source_dir_path, output_file_path),
                 number=2), 3)
         # todo: check_content
-        artifact_size = os.path.getsize(os.path.join(common_paths.extracted_data_path, artifact_name))
+        output_file_path = os.path.join(common_paths.extracted_data_path, artifact_name)
+        if not os.path.isfile(output_file_path):
+            execution_time = None
+
+        if artifact_name not in self.first_sizes:
+            self.first_sizes[artifact_name] = os.path.getsize(output_file_path)
+
+
         artifact_info = models.ArtifactInfo(name=artifact_name,
-                                            size=artifact_size,
+                                            size=self.first_sizes[artifact_name],
                                             files_count=artifact_target.files_count)
         self.execution_info.append(models.ExecutionInfo(execution_time=execution_time,
                                                         artifact=artifact_info,

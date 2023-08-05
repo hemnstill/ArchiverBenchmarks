@@ -58,6 +58,10 @@ def create_7zip(source_dir_path: str, file_path: str):
 
 
 def create(source_dir_path: str, file_path: str):
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
     if file_path.endswith('.tar'):
         create_tar(source_dir_path, file_path)
         return
