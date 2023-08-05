@@ -38,7 +38,7 @@ def create_tar_zstd(source_dir_path: str, file_path: str):
         raise IOError(f"'{source_dir_path}' should be directory.")
 
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    subprocess.run([get_bsdtar_exe_path(), '--zstd', '-cf', file_path, '-C', source_dir_path, '.'], check=True)
+    subprocess.run([get_bsdtar_exe_path(), '--zstd', '--options', 'zstd:compression-level=1', '-cf', file_path, '-C', source_dir_path, '.'], check=True)
 
 
 def create_zip(source_dir_path: str, file_path: str):
