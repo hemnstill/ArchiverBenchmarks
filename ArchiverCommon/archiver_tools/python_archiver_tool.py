@@ -73,7 +73,7 @@ class ZipPackageFile(PackageFile, ContextDecorator):
         return self
 
     def open(self, mode: PathModeType = 'r') -> None:
-        self.zip_file = zipfile.ZipFile(self.file_path, mode=mode, compression=zipfile.ZIP_DEFLATED)
+        self.zip_file = zipfile.ZipFile(self.file_path, mode=mode, compression=zipfile.ZIP_DEFLATED, compresslevel=1)
 
     def close(self) -> None:
         if self.zip_file:
@@ -122,7 +122,10 @@ class TarPackageFile(PackageFile):
             self.tar_file.close()
             self.tar_file = None
 
-    def open(self, mode: str = 'r') -> None:
+    def open(self, mode: str = 'r', compresslevel: int | None = None) -> None:
+        if compresslevel:
+            self.tar_file = tarfile.TarFile.gzopen(self.file_path, mode=mode, compresslevel=compresslevel)
+            return
         self.tar_file = tarfile.open(self.file_path, mode, format=tarfile.GNU_FORMAT, encoding=self.encoding)
 
     def add(self, source_path: str, relative_path: str) -> None:
@@ -181,7 +184,7 @@ def create(source_dir_path: str, file_path: str):
 
     if file_path.endswith('.tar.gz'):
         package = TarPackageFile(file_path)
-        package.open('w:gz')
+        package.open('w', compresslevel=1)
         package.add(source_dir_path, '.')
         package.close()
         return
