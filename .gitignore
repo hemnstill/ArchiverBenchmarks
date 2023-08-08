@@ -13,3 +13,5 @@ DecompressTests/build-*.md
 .tools/release
 
 CompressTests/release/
+
+ArchiverCommon/tmp

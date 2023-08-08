@@ -73,7 +73,7 @@ class ZipPackageFile(PackageFile, ContextDecorator):
         return self
 
     def open(self, mode: PathModeType = 'r') -> None:
-        self.zip_file = zipfile.ZipFile(self.file_path, mode=mode, compression=zipfile.ZIP_DEFLATED)
+        self.zip_file = zipfile.ZipFile(self.file_path, mode=mode, compression=zipfile.ZIP_DEFLATED, compresslevel=1)
 
     def close(self) -> None:
         if self.zip_file:
@@ -122,8 +122,13 @@ class TarPackageFile(PackageFile):
             self.tar_file.close()
             self.tar_file = None
 
-    def open(self, mode: str = 'r') -> None:
-        self.tar_file = tarfile.open(self.file_path, mode, format=tarfile.GNU_FORMAT, encoding=self.encoding)
+    def open(self, mode: str = 'r', compresslevel: int | None = None, pax_headers = None) -> None:
+        if compresslevel:
+            self.tar_file = tarfile.TarFile.gzopen(self.file_path, mode=mode, compresslevel=compresslevel)
+            return
+        self.tar_file = tarfile.open(self.file_path, mode,
+                                     encoding=self.encoding,
+                                     pax_headers=pax_headers)
 
     def add(self, source_path: str, relative_path: str) -> None:
         if self.tar_file:
@@ -162,3 +167,48 @@ def extract(file_path: str, output_dir_path: str):
     package = package_class(file_path)
     package.open()
     package.extract_all(output_dir_path)
+
+
+def create(source_dir_path: str, file_path: str):
+    if file_path.endswith('.zip'):
+        package = ZipPackageFile(file_path)
+        package.open('w')
+        package.add(source_dir_path, '.')
+        package.close()
+        return
+
+    if file_path.endswith('.tar'):
+        package = TarPackageFile(file_path)
+        package.open('w')
+        package.add(source_dir_path, '.')
+        package.close()
+        return
+
+    if file_path.endswith('.tar.gz'):
+        package = TarPackageFile(file_path)
+        package.open('w', compresslevel=1)
+        package.add(source_dir_path, '.')
+        package.close()
+        return
+
+    raise NotImplementedError(f"python archiver create does not support: '{file_path}'")
+
+
+def create_tar_with_pax_headers(source_dir_path: str, file_path: str):
+    pax_headers = {'test_header': 'test_header_value'}
+    if file_path.endswith('.tar'):
+        package = TarPackageFile(file_path)
+        package.open('w', pax_headers=pax_headers)
+        package.add(source_dir_path, '.')
+        package.close()
+        return
+
+
+def get_pax_headers(file_path: str) -> dict[str, str]:
+    if file_path.endswith('.tar'):
+        package = TarPackageFile(file_path)
+        package.open()
+        pax_headers = package.tar_file.pax_headers
+        package.close()
+        return pax_headers
+

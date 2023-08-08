@@ -23,8 +23,10 @@ jobs:
         env:
           DISABLE_HEAVY_TESTS: ${{ vars.DISABLE_HEAVY_TESTS }}
         run: |
+          echo "::group::init deps"
           apt update
           apt install -y curl wget zstd pigz unar isal
+          echo "::endgroup::"
           ./${{ inputs.workflow }}/build_${{ inputs.toolset }}.sh
 
       - uses: actions/upload-artifact@v3
