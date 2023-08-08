@@ -2,7 +2,7 @@ import os
 import pathlib
 
 from ArchiverCommon import wget_tool, io_tools, common_paths, models
-from ArchiverCommon.archiver_tools import bsdtar_tool, zstd_tool, igzip_tool, p7zip_tool
+from ArchiverCommon.archiver_tools import bsdtar_tool, zstd_tool, igzip_tool, p7zip_tool, python_archiver_tool
 from ArchiverCommon.io_tools import get_name_without_extensions
 
 
@@ -116,3 +116,19 @@ def check_content(artifact: models.ArtifactInfo, output_dir_path: str):
         print(f'files_count mismatch: {artifact.files_count} != {output_dir_path_files_count}')
         return False
     return True
+
+
+def check_first_utf8_filename(file_path):
+    non_ascii_filename = python_archiver_tool.get_first_non_ascii_filename(file_path)
+    if not non_ascii_filename:
+        return
+
+    result_dirpath = common_paths.create_temp_path('check_utf8')
+    non_ascii_filepath = os.path.join(result_dirpath, non_ascii_filename)
+    if pathlib.Path(non_ascii_filepath).exists():
+        os.remove(non_ascii_filepath)
+    bsdtar_tool.extract_file(file_path, non_ascii_filename, result_dirpath)
+    if not pathlib.Path(non_ascii_filepath).exists():
+        raise IOError(f"Check utf-8 failed: '{non_ascii_filename}' in '{file_path}'")
+    if pathlib.Path(non_ascii_filepath).exists():
+        os.remove(non_ascii_filepath)
