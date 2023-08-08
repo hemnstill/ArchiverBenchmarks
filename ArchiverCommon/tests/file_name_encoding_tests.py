@@ -1,5 +1,6 @@
 import os.path
 import pathlib
+import sys
 import unittest
 
 import test_tools
@@ -14,6 +15,9 @@ class FileNameEncodingTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        if not io_tools.try_create_or_clean_dir(common_paths.temp_path):
+            raise IOError('try_create_or_clean_dir')
+
         cls.archive_formats = ['.zip',
                                '.tar.gz',
                                ]
@@ -31,9 +35,6 @@ class FileNameEncodingTests(unittest.TestCase):
         cls.etalon_linux_dirpath = os.path.join(_self_path, 'linux')
 
     def setUp(self) -> None:
-        if not io_tools.try_create_or_clean_dir(common_paths.temp_path):
-            raise IOError('try_create_or_clean_dir')
-
         self.result_dirpath = common_paths.create_temp_path('result')
         self.result_extracted_dirpath = common_paths.create_temp_path('result_extract')
         self.create_utf8()
@@ -68,6 +69,7 @@ class FileNameEncodingTests(unittest.TestCase):
                     archiver_tool.extract(archive_file_path, extracted_dir_path)
                     self.check_filename(extracted_dir_path)
 
+    @unittest.skipIf(sys.platform.startswith('win'), 'same as test_extract_utf8')
     def test_extract_etalon_data_windows(self):
         for archiver_tool_from in self.archiver_tools_create:
             for archiver_tool in self.archiver_tools_extract:
@@ -82,6 +84,7 @@ class FileNameEncodingTests(unittest.TestCase):
                     archiver_tool.extract(archive_file_path, extracted_dir_path)
                     self.check_filename(extracted_dir_path)
 
+    @unittest.skipIf(not sys.platform.startswith('win'), 'same as test_extract_utf8')
     def test_extract_etalon_data_linux(self):
         for archiver_tool_from in self.archiver_tools_create:
             for archiver_tool in self.archiver_tools_extract:

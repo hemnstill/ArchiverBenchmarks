@@ -1,20 +1,16 @@
 import os.path
-import pathlib
 import unittest
 
 import test_tools
 
 _self_path: str = os.path.dirname(os.path.realpath(__file__))
 
-from ArchiverCommon import io_tools, common_paths
-from ArchiverCommon.archiver_tools import bsdtar_tool, p7zip_tool, python_archiver_tool
+from ArchiverCommon import common_paths
+from ArchiverCommon.archiver_tools import bsdtar_tool, python_archiver_tool
 
 
 class PaxHeadersTests(unittest.TestCase):
     def setUp(self) -> None:
-        if not io_tools.try_create_or_clean_dir(common_paths.temp_path):
-            raise IOError('try_create_or_clean_dir')
-
         self.test_archive_dirpath = common_paths.create_temp_path('PaxHeadersTests')
         self.test_archive_filepath = os.path.join(self.test_archive_dirpath, 'with_pax.tar')
 
