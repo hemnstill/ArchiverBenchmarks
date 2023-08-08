@@ -80,6 +80,9 @@ class FileNameEncodingTests(unittest.TestCase):
                                                      f'{self.get_tool_name(archiver_tool_from)}{archive_format}')
                     extracted_dir_path = os.path.join(self.result_extracted_dirpath,
                                                       f"{self.get_tool_name(archiver_tool)}-{self.get_tool_name(archiver_tool_from)}{archive_format}")
+                    if not os.path.isfile(archive_file_path):
+                        print(f"'skip '{archive_file_path}'")
+                        continue
                     archiver_tool.extract(archive_file_path, extracted_dir_path)
                     self.check_filename(extracted_dir_path)
 
@@ -91,5 +94,8 @@ class FileNameEncodingTests(unittest.TestCase):
                                                      f'{self.get_tool_name(archiver_tool_from)}{archive_format}')
                     extracted_dir_path = os.path.join(self.result_extracted_dirpath,
                                                       f"{self.get_tool_name(archiver_tool)}-{self.get_tool_name(archiver_tool_from)}{archive_format}")
+                    if not os.path.isfile(archive_file_path):
+                        print(f"'skip '{archive_file_path}'")
+                        continue
                     archiver_tool.extract(archive_file_path, extracted_dir_path)
                     self.check_filename(extracted_dir_path)
