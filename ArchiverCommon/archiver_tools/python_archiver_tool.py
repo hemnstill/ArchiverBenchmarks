@@ -162,3 +162,28 @@ def extract(file_path: str, output_dir_path: str):
     package = package_class(file_path)
     package.open()
     package.extract_all(output_dir_path)
+
+
+def create(source_dir_path: str, file_path: str):
+    if file_path.endswith('.zip'):
+        package = ZipPackageFile(file_path)
+        package.open('w')
+        package.add(source_dir_path, '.')
+        package.close()
+        return
+
+    if file_path.endswith('.tar'):
+        package = TarPackageFile(file_path)
+        package.open('w')
+        package.add(source_dir_path, '.')
+        package.close()
+        return
+
+    if file_path.endswith('.tar.gz'):
+        package = TarPackageFile(file_path)
+        package.open('w:gz')
+        package.add(source_dir_path, '.')
+        package.close()
+        return
+
+    raise NotImplementedError(f"python archiver create does not support: '{file_path}'")

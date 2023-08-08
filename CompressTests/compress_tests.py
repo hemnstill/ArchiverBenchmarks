@@ -24,6 +24,7 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
         'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', create=archiver_tools.bsdtar_tool.create),
         '7zip-21.07': models.ArchiverInfo(name='7zip-21.07', create=archiver_tools.p7zip_tool.create),
         '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', create=archiver_tools.p7zip_zstd_tool.create),
+        'python-3.11': models.ArchiverInfo(name='python-3.11', create=archiver_tools.python_archiver_tool.create),
     }
 
     if sys.platform.startswith('win') and '7zip-21.07' in archivers:

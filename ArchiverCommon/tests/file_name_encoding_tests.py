@@ -7,7 +7,7 @@ import test_tools
 _self_path: str = os.path.dirname(os.path.realpath(__file__))
 
 from ArchiverCommon import io_tools, common_paths
-from ArchiverCommon.archiver_tools import bsdtar_tool, p7zip_tool
+from ArchiverCommon.archiver_tools import bsdtar_tool, p7zip_tool, python_archiver_tool
 
 
 class FileNameEncodingTests(unittest.TestCase):
@@ -22,10 +22,12 @@ class FileNameEncodingTests(unittest.TestCase):
         cls.archiver_tools_extract = [
             bsdtar_tool,
             p7zip_tool,
+            python_archiver_tool
         ]
 
         cls.archiver_tools_create = [bsdtar_tool,
                                      p7zip_tool,
+                                     python_archiver_tool
                                      ]
         cls.utf_8_filename = 'พลัง'
         cls.etalon_windows_dirpath = os.path.join(_self_path, 'windows')
