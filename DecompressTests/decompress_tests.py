@@ -25,7 +25,7 @@ def artifacts_data() -> dict[str, models.ArtifactInfo]:
 def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
     archivers = {
         'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', extract=archiver_tools.bsdtar_tool.extract),
-        '7zip-21.07': models.ArchiverInfo(name='7zip-21.07', extract=archiver_tools.p7zip_tool.extract),
+        '7zip-23.01': models.ArchiverInfo(name='7zip-23.01', extract=archiver_tools.p7zip_tool.extract),
         '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', extract=archiver_tools.p7zip_zstd_tool.extract),
         'zstd-1.5.5': models.ArchiverInfo(name='zstd-1.5.5', extract=archiver_tools.zstd_tool.extract),
         'igzip-2.30': models.ArchiverInfo(name='igzip-2.30', extract=archiver_tools.igzip_tool.extract),
@@ -36,9 +36,9 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
         'python-3.11': models.ArchiverInfo(name='python-3.11', extract=archiver_tools.python_archiver_tool.extract),
     }
 
-    if sys.platform.startswith('win') and '7zip-21.07' in archivers:
+    if sys.platform.startswith('win') and '7zip-23.01' in archivers:
         # Not used: same as 7z22.01-zstd
-        archivers.pop('7zip-21.07')
+        archivers.pop('7zip-23.01')
 
     if not sys.platform.startswith('win') and '7z22.01-zstd' in archivers:
         # Not working on linux.

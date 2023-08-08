@@ -22,14 +22,14 @@ def artifacts_data() -> dict[str, models.ArtifactInfo]:
 def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
     archivers = {
         'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', create=archiver_tools.bsdtar_tool.create),
-        '7zip-21.07': models.ArchiverInfo(name='7zip-21.07', create=archiver_tools.p7zip_tool.create),
+        '7zip-23.01': models.ArchiverInfo(name='7zip-23.01', create=archiver_tools.p7zip_tool.create),
         '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', create=archiver_tools.p7zip_zstd_tool.create),
         'python-3.11': models.ArchiverInfo(name='python-3.11', create=archiver_tools.python_archiver_tool.create),
     }
 
-    if sys.platform.startswith('win') and '7zip-21.07' in archivers:
+    if sys.platform.startswith('win') and '7zip-23.01' in archivers:
         # Not used: same as 7z22.01-zstd
-        archivers.pop('7zip-21.07')
+        archivers.pop('7zip-23.01')
 
     if not sys.platform.startswith('win') and '7z22.01-zstd' in archivers:
         # Not working on linux.
