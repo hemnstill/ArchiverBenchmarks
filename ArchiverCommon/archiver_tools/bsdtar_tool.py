@@ -25,6 +25,14 @@ def create_tar(source_dir_path: str, file_path: str):
     subprocess.run([get_bsdtar_exe_path(), '-cf', file_path, '-C', source_dir_path, '.'], check=True)
 
 
+def append_tar(source_dir_path: str, file_path: str):
+    if not os.path.isdir(source_dir_path):
+        raise IOError(f"'{source_dir_path}' should be directory.")
+
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    subprocess.run([get_bsdtar_exe_path(), '-rf', file_path, '-C', source_dir_path, '.'], check=True)
+
+
 def create_tar_gz(source_dir_path: str, file_path: str):
     if not os.path.isdir(source_dir_path):
         raise IOError(f"'{source_dir_path}' should be directory.")

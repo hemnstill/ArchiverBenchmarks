@@ -24,12 +24,11 @@ class FileNameEncodingTests(unittest.TestCase):
             p7zip_tool,
             python_archiver_tool
         ]
-
-        cls.archiver_tools_create = [bsdtar_tool,
-                                     p7zip_tool,
-                                     python_archiver_tool
-                                     ]
-        cls.utf_8_filename = 'พลัง'
+        cls.archiver_tools_create = [
+            bsdtar_tool,
+            p7zip_tool,
+            python_archiver_tool
+        ]
         cls.etalon_windows_dirpath = os.path.join(_self_path, 'windows')
         cls.etalon_linux_dirpath = os.path.join(_self_path, 'linux')
 
@@ -45,9 +44,7 @@ class FileNameEncodingTests(unittest.TestCase):
 
     @classmethod
     def create_utf8(cls):
-        test_archive_dirpath = common_paths.create_temp_path('test_archive')
-        utf8_file_path = os.path.join(test_archive_dirpath, cls.utf_8_filename)
-        io_tools.write_text(utf8_file_path, 'test content')
+        test_archive_dirpath = test_tools.create_dir_with_utf8_filename('test_archive_python')
 
         for archive_format in cls.archive_formats:
             for archiver_tool in cls.archiver_tools_create:
@@ -55,6 +52,12 @@ class FileNameEncodingTests(unittest.TestCase):
                                                  f'{cls.get_tool_name(archiver_tool)}{archive_format}')
                 archiver_tool.create(test_archive_dirpath, archive_file_path)
 
+    def check_filename(self, extract_dir_path: str):
+        utf8_file_path = os.path.join(extract_dir_path, 'test_archive', test_tools.utf_8_filename)
+        utf8_file_path2 = os.path.join(extract_dir_path, test_tools.utf_8_filename)
+        if not pathlib.Path(utf8_file_path).is_file() and not pathlib.Path(utf8_file_path2).is_file():
+            print(f"{self._testMethodName} '{extract_dir_path}' failed.")
+            
     def test_extract_utf8(self):
         for archiver_tool_from in self.archiver_tools_create:
             for archiver_tool in self.archiver_tools_extract:
@@ -65,12 +68,6 @@ class FileNameEncodingTests(unittest.TestCase):
                                                       f"{self.get_tool_name(archiver_tool)}-{self.get_tool_name(archiver_tool_from)}{archive_format}")
                     archiver_tool.extract(archive_file_path, extracted_dir_path)
                     self.check_filename(extracted_dir_path)
-
-    def check_filename(self, extract_dir_path: str):
-        utf8_file_path = os.path.join(extract_dir_path, 'test_archive', self.utf_8_filename)
-        utf8_file_path2 = os.path.join(extract_dir_path, self.utf_8_filename)
-        if not pathlib.Path(utf8_file_path).is_file() and not pathlib.Path(utf8_file_path2).is_file():
-            print(f"{self._testMethodName} '{extract_dir_path}' failed.")
 
     def test_extract_etalon_data_windows(self):
         for archiver_tool_from in self.archiver_tools_create:
