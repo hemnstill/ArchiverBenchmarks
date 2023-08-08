@@ -17,7 +17,7 @@ cpython_bin="$dp0/Scripts/bin/python3"
 [[ ! -f "$cpython_bin" ]] && tar -xf "$python_download_zip" -C "$dp0"
 
 "$cpython_bin" -m pip install pygal==3.0.0 airium==0.2.5 rapidgzip==0.7.0 isal==1.2.0 py7zr==0.20.5
-"$cpython_bin" -m unittest discover -s tests --pattern=*_tests.py
+"$cpython_bin" -m unittest discover -s "$dp0/tests" --pattern=*_tests.py
 
 
 cd "$release_version_dirpath"
