@@ -22,7 +22,7 @@ cpython_bin="$dp0/Scripts/bin/python3"
 
 echo "::endgroup::"
 
-"$cpython_bin" -m unittest discover -s "$dp0/ArchiverCommon/tests" --pattern=*_tests.py
+"$cpython_bin" -m unittest discover -s "$dp0/tests" --pattern=*_tests.py
 
 
 cd "$release_version_dirpath"
