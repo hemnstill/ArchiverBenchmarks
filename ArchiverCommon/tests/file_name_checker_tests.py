@@ -22,7 +22,7 @@ class FileNameCheckerTests(unittest.TestCase):
             try:
                 artifact_tools.check_first_utf8_filename(str(archive_file))
             except subprocess.CalledProcessError as ex:
-                print(f"{ex}")
+                print(str(ex).encode('utf-8', 'replace'))
 
     def test_check_utf8_file_names_windows(self):
         for archive_file in pathlib.Path(self.etalon_windows_dirpath).iterdir():
@@ -31,4 +31,4 @@ class FileNameCheckerTests(unittest.TestCase):
             try:
                 artifact_tools.check_first_utf8_filename(str(archive_file))
             except subprocess.CalledProcessError as ex:
-                print(repr(ex))
+                print(str(ex).encode('utf-8', 'replace'))
