@@ -2,6 +2,8 @@ import os.path
 import pathlib
 import unittest
 
+import test_tools
+
 from ArchiverCommon import io_tools, common_paths
 from ArchiverCommon.archiver_tools import bsdtar_tool, p7zip_tool
 

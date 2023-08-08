@@ -1,5 +1,7 @@
 import unittest
 
+import test_tools
+
 from ArchiverCommon.io_tools import get_name_without_extensions
 
 
