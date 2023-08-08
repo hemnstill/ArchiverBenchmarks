@@ -31,4 +31,4 @@ class FileNameCheckerTests(unittest.TestCase):
             try:
                 artifact_tools.check_first_utf8_filename(str(archive_file))
             except subprocess.CalledProcessError as ex:
-                print(f"{ex}")
+                print(repr(ex))
