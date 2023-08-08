@@ -202,16 +202,7 @@ def create_tar_with_pax_headers(source_dir_path: str, file_path: str):
         package.add(source_dir_path, '.')
         package.close()
         return
-
-
-def create_blank_tar_with_pax_headers(file_path: str):
-    pax_headers = {'test_header': 'test_header_value'}
-    if file_path.endswith('.tar'):
-        package = TarPackageFile(file_path)
-        package.open('w', pax_headers=pax_headers)
-        package.close()
-        return
-
+    
 
 def get_pax_headers(file_path: str) -> dict[str, str]:
     if file_path.endswith('.tar'):
