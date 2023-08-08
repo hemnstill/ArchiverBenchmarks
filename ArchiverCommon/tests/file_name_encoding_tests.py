@@ -4,6 +4,8 @@ import unittest
 
 import test_tools
 
+_self_path: str = os.path.dirname(os.path.realpath(__file__))
+
 from ArchiverCommon import io_tools, common_paths
 from ArchiverCommon.archiver_tools import bsdtar_tool, p7zip_tool
 
@@ -29,6 +31,9 @@ class FileNameEncodingTests(unittest.TestCase):
                                      ]
         cls.utf_8_filename = 'พลัง'
         cls.create_utf8()
+
+        cls.etalon_windows_dirpath = os.path.join(_self_path, 'windows')
+        cls.etalon_linux_dirpath = os.path.join(_self_path, 'linux')
 
     @classmethod
     def get_tool_name(cls, archiver_tool):
@@ -62,3 +67,25 @@ class FileNameEncodingTests(unittest.TestCase):
         utf8_file_path2 = os.path.join(extract_dir_path, self.utf_8_filename)
         if not pathlib.Path(utf8_file_path).is_file() and not pathlib.Path(utf8_file_path2).is_file():
             print(f"'{extract_dir_path}' failed.")
+
+    def test_extract_etalon_data_windows(self):
+        for archiver_tool_from in self.archiver_tools_create:
+            for archiver_tool in self.archiver_tools_extract:
+                for archive_format in self.archive_formats:
+                    archive_file_path = os.path.join(self.etalon_windows_dirpath,
+                                                     f'{self.get_tool_name(archiver_tool_from)}{archive_format}')
+                    extracted_dir_path = os.path.join(self.result_extracted_dirpath,
+                                                      f"{self.get_tool_name(archiver_tool)}-{self.get_tool_name(archiver_tool_from)}{archive_format}")
+                    archiver_tool.extract(archive_file_path, extracted_dir_path)
+                    self.check_filename(extracted_dir_path)
+
+    def test_extract_etalon_data_linux(self):
+        for archiver_tool_from in self.archiver_tools_create:
+            for archiver_tool in self.archiver_tools_extract:
+                for archive_format in self.archive_formats:
+                    archive_file_path = os.path.join(self.etalon_linux_dirpath,
+                                                     f'{self.get_tool_name(archiver_tool_from)}{archive_format}')
+                    extracted_dir_path = os.path.join(self.result_extracted_dirpath,
+                                                      f"{self.get_tool_name(archiver_tool)}-{self.get_tool_name(archiver_tool_from)}{archive_format}")
+                    archiver_tool.extract(archive_file_path, extracted_dir_path)
+                    self.check_filename(extracted_dir_path)
