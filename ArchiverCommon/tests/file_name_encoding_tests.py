@@ -14,8 +14,6 @@ class FileNameEncodingTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        if not io_tools.try_create_or_clean_dir(common_paths.temp_path):
-            raise IOError('try_create_or_clean_dir')
         cls.result_dirpath = common_paths.create_temp_path('result')
         cls.result_extracted_dirpath = common_paths.create_temp_path('result_extract')
         cls.archive_formats = ['.zip',
@@ -30,10 +28,14 @@ class FileNameEncodingTests(unittest.TestCase):
                                      p7zip_tool,
                                      ]
         cls.utf_8_filename = 'พลัง'
-        cls.create_utf8()
-
         cls.etalon_windows_dirpath = os.path.join(_self_path, 'windows')
         cls.etalon_linux_dirpath = os.path.join(_self_path, 'linux')
+
+    def setUp(self) -> None:
+        if not io_tools.try_create_or_clean_dir(common_paths.temp_path):
+            raise IOError('try_create_or_clean_dir')
+
+        self.create_utf8()
 
     @classmethod
     def get_tool_name(cls, archiver_tool):
