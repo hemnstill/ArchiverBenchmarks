@@ -24,6 +24,8 @@ echo "::endgroup::"
 
 "$cpython_bin" -m unittest discover -s "$dp0/tests" --pattern=*_tests.py
 
+cp -rf "$dp0/tmp/result" "$release_version_dirpath"
+
 cd "$release_version_dirpath"
 
 tar -czvf "../$self_toolset_name.tar.gz" .
