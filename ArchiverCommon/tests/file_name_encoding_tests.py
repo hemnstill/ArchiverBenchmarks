@@ -68,7 +68,7 @@ class FileNameEncodingTests(unittest.TestCase):
         utf8_file_path = os.path.join(extract_dir_path, 'test_archive', self.utf_8_filename)
         utf8_file_path2 = os.path.join(extract_dir_path, self.utf_8_filename)
         if not pathlib.Path(utf8_file_path).is_file() and not pathlib.Path(utf8_file_path2).is_file():
-            print(f"'{extract_dir_path}' failed.")
+            print(f"{self._testMethodName} '{extract_dir_path}' failed.")
 
     def test_extract_etalon_data_windows(self):
         for archiver_tool_from in self.archiver_tools_create:
