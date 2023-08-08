@@ -1,14 +1,13 @@
 import os.path
 import pathlib
-import sys
+import subprocess
 import unittest
 
 import test_tools
 
 _self_path: str = os.path.dirname(os.path.realpath(__file__))
 
-from ArchiverCommon import io_tools, common_paths
-from ArchiverCommon.archiver_tools import bsdtar_tool, p7zip_tool, python_archiver_tool
+from ArchiverCommon import artifact_tools
 
 
 class FileNameCheckerTests(unittest.TestCase):
@@ -20,14 +19,16 @@ class FileNameCheckerTests(unittest.TestCase):
         for archive_file in pathlib.Path(self.etalon_linux_dirpath).iterdir():
             if not archive_file.is_file():
                 continue
-            non_ascii_filename = python_archiver_tool.get_first_non_ascii_filename(str(archive_file))
-            if not non_ascii_filename:
-                print(f"Not found utf-8: '{non_ascii_filename}' in '{archive_file}'")
+            try:
+                artifact_tools.check_first_utf8_filename(str(archive_file))
+            except subprocess.CalledProcessError as ex:
+                print(f"{ex}")
 
     def test_check_utf8_file_names_windows(self):
         for archive_file in pathlib.Path(self.etalon_windows_dirpath).iterdir():
             if not archive_file.is_file():
                 continue
-            non_ascii_filename = python_archiver_tool.get_first_non_ascii_filename(str(archive_file))
-            if not non_ascii_filename:
-                print(f"Not found utf-8: '{non_ascii_filename}' in '{archive_file}'")
+            try:
+                artifact_tools.check_first_utf8_filename(str(archive_file))
+            except subprocess.CalledProcessError as ex:
+                print(f"{ex}")

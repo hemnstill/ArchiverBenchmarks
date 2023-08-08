@@ -92,3 +92,7 @@ def create(source_dir_path: str, file_path: str):
 
     raise NotImplementedError(f"bsdtar create does not support: '{file_path}'")
 
+
+def extract_file(file_path: str, inside_archive_file_path, output_dir_path: str):
+    os.makedirs(output_dir_path, exist_ok=True)
+    subprocess.run([get_bsdtar_exe_path(), '-xf', file_path, '-C', output_dir_path, inside_archive_file_path], check=True)
