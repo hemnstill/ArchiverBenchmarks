@@ -62,6 +62,10 @@ class PackageFile:
     def can_open(file_name: str) -> bool:
         ...
 
+    @abstractmethod
+    def list(self) -> list[str]:
+        ...
+
 
 class ZipPackageFile(PackageFile, ContextDecorator):
     def __init__(self, file_path: str, mode: PathModeType = 'r'):
@@ -105,6 +109,9 @@ class ZipPackageFile(PackageFile, ContextDecorator):
     @staticmethod
     def can_open(file_name: str) -> bool:
         return zipfile.is_zipfile(file_name)
+
+    def list(self) -> list[str]:
+        return [fl.filename for fl in self.zip_file.filelist]
 
 
 class TarPackageFile(PackageFile):
@@ -153,6 +160,9 @@ class TarPackageFile(PackageFile):
     @staticmethod
     def can_open(file_name: str) -> bool:
         return tarfile.is_tarfile(file_name)
+
+    def list(self) -> list[str]:
+        return self.tar_file.getnames()
 
 
 def is_package_file_extension(file_name: str) -> bool:
@@ -212,3 +222,21 @@ def get_pax_headers(file_path: str) -> dict[str, str]:
         package.close()
         return pax_headers
 
+
+def get_filenames(file_path: str) -> list[str]:
+    package_class = get_package_class_for_file(file_path)
+    if not package_class:
+        raise NotImplementedError(f"python does not support: '{file_path}'")
+
+    package = package_class(file_path)
+    package.open()
+    result = package.list()
+    package.close()
+    return result
+
+
+def get_first_non_ascii_filename(file_path: str) -> str | None:
+    for fn in get_filenames(file_path):
+        if not fn.isascii():
+            return fn
+    return None
