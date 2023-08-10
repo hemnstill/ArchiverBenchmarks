@@ -24,7 +24,7 @@ def artifacts_data() -> dict[str, models.ArtifactInfo]:
 
 def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
     archivers = {
-        'bsdtar-3.6.2': models.ArchiverInfo(name='bsdtar-3.6.2', extract=archiver_tools.bsdtar_tool.extract),
+        'bsdtar-3.7.1': models.ArchiverInfo(name='bsdtar-3.7.1', extract=archiver_tools.bsdtar_tool.extract),
         '7zip-23.01': models.ArchiverInfo(name='7zip-23.01', extract=archiver_tools.p7zip_tool.extract),
         '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', extract=archiver_tools.p7zip_zstd_tool.extract),
         'zstd-1.5.5': models.ArchiverInfo(name='zstd-1.5.5', extract=archiver_tools.zstd_tool.extract),
