@@ -33,8 +33,8 @@ def create_tar_artifact(zip_artifact: models.ArtifactInfo) -> models.ArtifactInf
         raise IOError(f'Cannot try_create_or_clean_dir: {output_dir_path}')
 
     zip_file_path = download_artifact(zip_artifact)
-    bsdtar_tool.extract(zip_file_path, output_dir_path)
-    bsdtar_tool.create_tar(output_dir_path, tar_file_path)
+    bsdtar_tool.extract(zip_file_path, output_dir_path, common_consts.latest)
+    bsdtar_tool.create_tar(output_dir_path, tar_file_path, common_consts.latest)
     return models.ArtifactInfo(tar_file_name, os.path.getsize(tar_file_path), zip_artifact.files_count)
 
 
