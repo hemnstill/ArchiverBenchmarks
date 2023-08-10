@@ -81,7 +81,7 @@ class FileNameEncodingTests(unittest.TestCase):
                     if not os.path.isfile(archive_file_path):
                         print(f"'skip '{archive_file_path}'")
                         continue
-                    archiver_tool.extract(archive_file_path, extracted_dir_path)
+                    archiver_tool.extract(archive_file_path, extracted_dir_path, version=common_consts.latest)
                     self.check_filename(extracted_dir_path)
 
     @unittest.skipIf(not sys.platform.startswith('win'), 'same as test_extract_utf8')
