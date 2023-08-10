@@ -68,7 +68,7 @@ jobs:
           tar -xf ./build-linux-small/build-linux-small.tar.gz -C ./_site/DecompressTests
           tar -xf ./build-linux-large/build-linux-large.tar.gz -C ./_site/DecompressTests
           
-          tar -xf ./build-windows/build-windows.tar.gz -C ./_site
+          tar -xf ./build-windows/build-windows.tar.gz -C ./_site/DecompressTests
           tar -xf ./build-windows-small/build-windows-small.tar.gz -C ./_site/DecompressTests
           tar -xf ./build-windows-large/build-windows-large.tar.gz -C ./_site/DecompressTests
       - name: Upload site artifact
