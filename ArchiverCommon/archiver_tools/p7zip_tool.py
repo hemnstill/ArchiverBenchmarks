@@ -4,12 +4,39 @@ import sys
 
 from ArchiverCommon import common_paths
 
+version_21_07 = '21.07'
+version_23_01 = '23.01'
 
-def get_7zip_exe_path():
+
+def get_7zip_21_07_exe_path():
     if sys.platform.startswith('win'):
-        return os.path.join(common_paths.tools_path, '7z-23.01', '7zz.exe')
+        return os.path.join(common_paths.tools_path, '7z-21.07', '7z.exe')
 
-    return os.path.join(common_paths.tools_path, '7z-23.01', '7zz')
+    return os.path.join(common_paths.tools_path, '7z-21.07', '7zzs')
+
+
+def get_7zip_exe_path(version: str | None = None):
+    if version == version_21_07:
+        return get_7zip_21_07_exe_path()
+
+    if not version:
+        version = version_23_01
+
+    if sys.platform.startswith('win'):
+        return os.path.join(common_paths.tools_path, f'7z-{version}', '7zz.exe')
+
+    return os.path.join(common_paths.tools_path, f'7z-{version}', '7zz')
+
+
+def get_version_from_stdout(b_stdout: bytes) -> str:
+    for b_line in b_stdout.splitlines():
+        if b_line.startswith(b'7-Zip'):
+            return b_line.decode().strip()
+
+
+def get_version(tool_version: str):
+    result = subprocess.run([get_7zip_exe_path(tool_version)], check=True, stdout=subprocess.PIPE)
+    return get_version_from_stdout(result.stdout)
 
 
 def extract(file_path: str, output_dir_path: str):
