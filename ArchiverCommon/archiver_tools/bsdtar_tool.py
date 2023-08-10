@@ -7,6 +7,7 @@ from ArchiverCommon import common_paths, common_consts
 version_362 = '3.6.2'
 version_371 = '3.7.1'
 
+
 def get_bsdtar_362_exe_path():
     if sys.platform.startswith('win'):
         return os.path.join(common_paths.tools_path, 'bsdtar-3.6.2.exe')

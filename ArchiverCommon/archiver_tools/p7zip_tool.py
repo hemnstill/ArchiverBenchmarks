@@ -62,7 +62,6 @@ def extract(file_path: str, output_dir_path: str, version: str) -> None:
                    check=True, shell=True)
 
 
-
 def create_7z(source_dir_path: str, file_path: str, version: str):
     if not os.path.isdir(source_dir_path):
         raise IOError(f"'{source_dir_path}' should be directory.")
@@ -86,7 +85,6 @@ def create_tar(source_dir_path: str, file_path: str, version: str):
 
 
 def create(source_dir_path: str, file_path: str, version: str):
-
     if os.path.exists(file_path):
         # 'tar | gzip' cannot overwrite archive.
         os.remove(file_path)
