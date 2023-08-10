@@ -6,6 +6,7 @@ from ArchiverCommon import common_paths, common_consts
 
 version_21_07 = '21.07'
 version_23_01 = '23.01'
+version_22_01_zstd = '22.01-zstd'
 
 
 def get_7zip_21_07_exe_path():
@@ -15,9 +16,19 @@ def get_7zip_21_07_exe_path():
     return os.path.join(common_paths.tools_path, '7z-21.07', '7zzs')
 
 
+def get_7zip_22_01_zstd_exe_path():
+    if sys.platform.startswith('win'):
+        return os.path.join(common_paths.tools_path, '7z22.01-zstd', '7z.exe')
+
+    raise NotImplementedError(f"platform not supported: '{sys.platform}'")
+
+
 def get_7zip_exe_path(version: str):
     if version == version_21_07:
         return get_7zip_21_07_exe_path()
+
+    if version == version_22_01_zstd:
+        return get_7zip_22_01_zstd_exe_path()
 
     if version == common_consts.latest:
         version = version_23_01
@@ -39,7 +50,7 @@ def get_version(tool_version: str):
     return get_version_from_stdout(result.stdout)
 
 
-def extract(file_path: str, output_dir_path: str, version: str):
+def extract(file_path: str, output_dir_path: str, version: str) -> None:
     if file_path.endswith('.zst'):
         raise NotImplementedError(f"7z does not support zstd: '{file_path}'")
 
@@ -50,9 +61,6 @@ def extract(file_path: str, output_dir_path: str, version: str):
     subprocess.run(f'"{get_7zip_exe_path(version)}" -bso0 -bd x "{file_path}" -so | "{get_7zip_exe_path(version)}" -bso0 -bd x -si -ttar "-o{output_dir_path}" -aoa',
                    check=True, shell=True)
 
-
-def get_extract_func(version: str):
-    return lambda file_path, output_dir_path: extract(file_path, output_dir_path, version)
 
 
 def create_7z(source_dir_path: str, file_path: str, version: str):
@@ -100,3 +108,7 @@ def create(source_dir_path: str, file_path: str, version: str):
 
 def get_create_func(version: str):
     return lambda source_dir_path, file_path: create(source_dir_path, file_path, version)
+
+
+def get_extract_func(version: str):
+    return lambda file_path, output_dir_path: extract(file_path, output_dir_path, version)

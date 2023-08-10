@@ -97,3 +97,11 @@ def create(source_dir_path: str, file_path: str, version: str):
 def extract_file(file_path: str, inside_archive_file_path, output_dir_path: str):
     os.makedirs(output_dir_path, exist_ok=True)
     subprocess.run([get_bsdtar_exe_path(), '-xf', file_path, '-C', output_dir_path, inside_archive_file_path], check=True)
+
+
+def get_create_func(version: str):
+    return lambda source_dir_path, file_path: create(source_dir_path, file_path, version)
+
+
+def get_extract_func(version: str):
+    return lambda file_path, output_dir_path: extract(file_path, output_dir_path, version)

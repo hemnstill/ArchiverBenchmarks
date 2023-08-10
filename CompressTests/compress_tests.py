@@ -22,11 +22,14 @@ def artifacts_data() -> dict[str, models.ArtifactInfo]:
 
 def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
     archivers = {
-        'bsdtar-3.7.1': models.ArchiverInfo(name='bsdtar-3.7.1', create=archiver_tools.bsdtar_tool.create),
+        'bsdtar-3.7.1': models.ArchiverInfo(name='bsdtar-3.7.1',
+                                            create=archiver_tools.bsdtar_tool.get_create_func(common_consts.latest)),
         '7zip-23.01': models.ArchiverInfo(name='7zip-23.01',
                                           create=archiver_tools.p7zip_tool.get_create_func(archiver_tools.p7zip_tool.version_23_01)),
-        '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd', create=archiver_tools.p7zip_zstd_tool.create),
-        'python-3.11': models.ArchiverInfo(name='python-3.11', create=archiver_tools.python_archiver_tool.create),
+        '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd',
+                                            create=archiver_tools.p7zip_zstd_tool.get_create_func(archiver_tools.p7zip_tool.version_22_01_zstd)),
+        'python-3.11': models.ArchiverInfo(name='python-3.11',
+                                           create=archiver_tools.python_archiver_tool.get_create_func(common_consts.latest)),
     }
 
     if sys.platform.startswith('win') and '7zip-23.01' in archivers:
@@ -84,7 +87,7 @@ class CompressTests(unittest.TestCase):
         execution_time = None
         with suppress(NotImplementedError):
             execution_time = round(0.5 * timeit(
-                lambda: archiver.create(source_dir_path, output_file_path, version=common_consts.latest),
+                lambda: archiver.create(source_dir_path, output_file_path),
                 number=2), 3)
         # todo: check_content
         output_file_path = os.path.join(common_paths.extracted_data_path, artifact_name)

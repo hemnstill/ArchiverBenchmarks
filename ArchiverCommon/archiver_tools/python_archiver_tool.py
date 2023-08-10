@@ -240,3 +240,10 @@ def get_first_non_ascii_filename(file_path: str) -> str | None:
         if not fn.isascii():
             return fn
     return None
+
+
+def get_create_func(version: str):
+    return lambda source_dir_path, file_path: create(source_dir_path, file_path, version)
+
+def get_extract_func(version: str):
+    return lambda file_path, output_dir_path: extract(file_path, output_dir_path, version)
