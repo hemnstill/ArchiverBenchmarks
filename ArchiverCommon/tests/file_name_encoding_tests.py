@@ -7,7 +7,7 @@ import test_tools
 
 _self_path: str = os.path.dirname(os.path.realpath(__file__))
 
-from ArchiverCommon import io_tools, common_paths
+from ArchiverCommon import io_tools, common_paths, common_consts
 from ArchiverCommon.archiver_tools import bsdtar_tool, p7zip_tool, python_archiver_tool
 
 
@@ -50,7 +50,7 @@ class FileNameEncodingTests(unittest.TestCase):
             for archiver_tool in self.archiver_tools_create:
                 archive_file_path = os.path.join(self.result_dirpath,
                                                  f'{self.get_tool_name(archiver_tool)}{archive_format}')
-                archiver_tool.create(test_archive_dirpath, archive_file_path)
+                archiver_tool.create(test_archive_dirpath, archive_file_path, version=common_consts.latest)
 
     def check_filename(self, extract_dir_path: str):
         utf8_file_path = os.path.join(extract_dir_path, 'test_archive', test_tools.utf_8_filename)
@@ -66,7 +66,7 @@ class FileNameEncodingTests(unittest.TestCase):
                                                      f'{self.get_tool_name(archiver_tool_from)}{archive_format}')
                     extracted_dir_path = os.path.join(self.result_extracted_dirpath,
                                                       f"{self.get_tool_name(archiver_tool)}-{self.get_tool_name(archiver_tool_from)}{archive_format}")
-                    archiver_tool.extract(archive_file_path, extracted_dir_path)
+                    archiver_tool.extract(archive_file_path, extracted_dir_path, version=common_consts.latest)
                     self.check_filename(extracted_dir_path)
 
     @unittest.skipIf(sys.platform.startswith('win'), 'same as test_extract_utf8')
@@ -96,5 +96,5 @@ class FileNameEncodingTests(unittest.TestCase):
                     if not os.path.isfile(archive_file_path):
                         print(f"'skip '{archive_file_path}'")
                         continue
-                    archiver_tool.extract(archive_file_path, extracted_dir_path)
+                    archiver_tool.extract(archive_file_path, extracted_dir_path, version=common_consts.latest)
                     self.check_filename(extracted_dir_path)

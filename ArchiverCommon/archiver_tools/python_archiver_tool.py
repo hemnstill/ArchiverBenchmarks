@@ -169,7 +169,7 @@ def is_package_file_extension(file_name: str) -> bool:
     return file_name.endswith(".zip") or file_name.endswith(".tar.gz")
 
 
-def extract(file_path: str, output_dir_path: str):
+def extract(file_path: str, output_dir_path: str, version: str):
     package_class = get_package_class_for_file(file_path)
     if not package_class:
         raise NotImplementedError(f"python does not support: '{file_path}'")
@@ -179,7 +179,7 @@ def extract(file_path: str, output_dir_path: str):
     package.extract_all(output_dir_path)
 
 
-def create(source_dir_path: str, file_path: str):
+def create(source_dir_path: str, file_path: str, version: str):
     if file_path.endswith('.zip'):
         package = ZipPackageFile(file_path)
         package.open('w')

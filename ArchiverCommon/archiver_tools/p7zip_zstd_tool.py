@@ -12,7 +12,7 @@ def get_7zip_exe_path():
     raise NotImplementedError(f"platform not supported: '{sys.platform}'")
 
 
-def extract(file_path: str, output_dir_path: str):
+def extract(file_path: str, output_dir_path: str, version: str):
     if file_path.endswith(('.7z', '.tar', '.zip')):
         subprocess.run([get_7zip_exe_path(), '-bso0', '-bd', 'x', file_path, f'-o{output_dir_path}', '-aoa'], check=True)
         return
@@ -51,7 +51,7 @@ def create_tar(source_dir_path: str, file_path: str):
     subprocess.run([get_7zip_exe_path(), '-bso0', '-bd', 'a', '-ttar', file_path, source_dir_path], check=True)
 
 
-def create(source_dir_path: str, file_path: str):
+def create(source_dir_path: str, file_path: str, version: str):
 
     if os.path.exists(file_path):
         # 'tar | gzip' cannot overwrite archive.

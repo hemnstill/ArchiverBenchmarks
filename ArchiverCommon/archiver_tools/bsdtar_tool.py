@@ -4,6 +4,7 @@ import sys
 
 from ArchiverCommon import common_paths
 
+version_371 = '3.7.1'
 
 def get_bsdtar_exe_path():
     if sys.platform.startswith('win'):
@@ -12,7 +13,7 @@ def get_bsdtar_exe_path():
     return os.path.join(common_paths.tools_path, 'bsdtar-3.7.1', 'bsdtar')
 
 
-def extract(file_path: str, output_dir_path: str):
+def extract(file_path: str, output_dir_path: str, version: str):
     os.makedirs(output_dir_path, exist_ok=True)
     subprocess.run([get_bsdtar_exe_path(), '-xf', file_path, '-C', output_dir_path], check=True)
 
@@ -65,7 +66,7 @@ def create_7zip(source_dir_path: str, file_path: str):
     subprocess.run([get_bsdtar_exe_path(), '--auto-compress', '--options', '7zip:compression-level=1', '-cf', file_path, '-C', source_dir_path, '.'], check=True)
 
 
-def create(source_dir_path: str, file_path: str):
+def create(source_dir_path: str, file_path: str, version: str):
 
     if os.path.exists(file_path):
         os.remove(file_path)

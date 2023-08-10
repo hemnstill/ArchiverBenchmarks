@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-from ArchiverCommon import wget_tool, io_tools, common_paths, models
+from ArchiverCommon import wget_tool, io_tools, common_paths, models, common_consts
 from ArchiverCommon.archiver_tools import bsdtar_tool, zstd_tool, igzip_tool, p7zip_tool, python_archiver_tool
 from ArchiverCommon.io_tools import get_name_without_extensions
 
@@ -79,8 +79,8 @@ def create_7z_artifact(zip_artifact: models.ArtifactInfo) -> models.ArtifactInfo
 
     zip_file_path = download_artifact(zip_artifact)
     output_dir_path = os.path.join(common_paths.extracted_data_path, f"_{zip_artifact.name}")
-    p7zip_tool.extract(zip_file_path, output_dir_path)
-    p7zip_tool.create_7z(output_dir_path, p7z_file_path)
+    p7zip_tool.extract(zip_file_path, output_dir_path, p7zip_tool.version_21_07)
+    p7zip_tool.create_7z(output_dir_path, p7z_file_path, version=p7zip_tool.version_21_07)
     return models.ArtifactInfo(p7z_file_name, os.path.getsize(p7z_file_path), zip_artifact.files_count)
 
 
@@ -100,7 +100,7 @@ def extract_artifact(zip_artifact: models.ArtifactInfo) -> models.ArtifactTarget
 
     zip_file_path = download_artifact(zip_artifact)
     print(f"extracting to '{output_dir_path}'")
-    bsdtar_tool.extract(zip_file_path, output_dir_path)
+    bsdtar_tool.extract(zip_file_path, output_dir_path, version=common_consts.latest)
     if not check_content(zip_artifact, output_dir_path):
         raise IOError(f"check_content failed: '{zip_file_path}'")
 
