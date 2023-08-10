@@ -27,8 +27,8 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
     archivers = {
         'bsdtar-3.7.1': models.ArchiverInfo(name='bsdtar-3.7.1',
                                             extract=archiver_tools.bsdtar_tool.get_extract_func(common_consts.latest)),
-        '7zip-21.07': models.ArchiverInfo(name='7zip-21.07',
-                                          extract=archiver_tools.p7zip_tool.get_extract_func(archiver_tools.p7zip_tool.version_21_07)),
+        '7zip-23.01': models.ArchiverInfo(name='7zip-23.01',
+                                          extract=archiver_tools.p7zip_tool.get_extract_func(archiver_tools.p7zip_tool.version_23_01)),
         '7z22.01-zstd': models.ArchiverInfo(name='7z22.01-zstd',
                                             extract=archiver_tools.p7zip_zstd_tool.get_extract_func(archiver_tools.p7zip_tool.version_22_01_zstd)),
         'zstd-1.5.5': models.ArchiverInfo(name='zstd-1.5.5', extract=archiver_tools.zstd_tool.extract),
@@ -41,9 +41,9 @@ def get_archiver_tools() -> dict[str, models.ArchiverInfo]:
                                            extract=archiver_tools.python_archiver_tool.get_extract_func(common_consts.latest)),
     }
 
-    if sys.platform.startswith('win') and '7zip-21.07' in archivers:
+    if sys.platform.startswith('win') and '7zip-23.01' in archivers:
         # Not used: same as 7z22.01-zstd
-        archivers.pop('7zip-21.07')
+        archivers.pop('7zip-23.01')
 
     if not sys.platform.startswith('win') and '7z22.01-zstd' in archivers:
         # Not working on linux.
