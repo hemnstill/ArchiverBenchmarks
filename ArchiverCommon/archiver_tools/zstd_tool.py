@@ -11,7 +11,7 @@ def get_zstd_exe_path():
     if sys.platform.startswith('win'):
         return os.path.join(common_paths.tools_path,'zstd-1.5.5.exe')
 
-    return 'zstd'
+    return os.path.join(common_paths.tools_path,'zstd-1.5.5')
 
 
 def extract(file_path: str, output_dir_path: str):
@@ -29,3 +29,14 @@ def create_tar_zst(source_tar_path: str):
 
     subprocess.run(args=f'"{get_zstd_exe_path()}" --force --keep "{source_tar_path}"',
                    check=True, shell=True)
+
+
+def get_version_from_stdout(b_stdout: bytes) -> str:
+    for b_line in b_stdout.splitlines():
+        if b_line.strip():
+            return b_line.decode().strip()
+
+
+def get_version():
+    result = subprocess.run([get_zstd_exe_path(), '--version'], check=True, stdout=subprocess.PIPE)
+    return get_version_from_stdout(result.stdout)
