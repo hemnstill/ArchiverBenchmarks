@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "::group::init deps"
           apt update
-          apt install -y curl wget zstd pigz unar isal
+          apt install -y curl wget pigz unar isal
           echo "::endgroup::"
           ./${{ inputs.workflow }}/build_${{ inputs.toolset }}.sh
 
